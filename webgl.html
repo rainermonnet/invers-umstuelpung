@@ -69,8 +69,17 @@
     </div>
 
     <div id="olo" class="hide">
-      <h2>Oloid</h2>
+      <h2>Entstehung</h2>
       <div class="btns">
+        <button id="b-play" class="on">❚❚ Pause</button>
+        <button id="b-rep">↺ Neu</button>
+      </div>
+      <input id="o-u" type="range" min="0" max="100" step="0.1" value="0" style="margin-top:8px">
+      <p class="note shape" id="o-step"></p>
+      <h2>Vom Polyeder zum Oloid</h2>
+      <input id="o-k" type="range" min="3" max="72" step="1" value="72">
+      <p class="note" id="o-kv"></p>
+      <div class="btns" style="margin-top:8px">
         <button id="o-spin" class="on">Drehung</button>
         <button id="o-wire">Drahtgitter</button>
       </div>
@@ -79,7 +88,7 @@
         <tr><td>Oberfläche</td><td id="ol-a"></td></tr>
         <tr><td>Volumen</td><td id="ol-v"></td></tr>
       </table>
-      <p class="note">Das Oloid ist die konvexe Hülle zweier senkrecht stehender Kreise, die jeweils durch den Mittelpunkt des anderen gehen. Seine Oberfläche ist abwickelbar. Es ist kein Zustand der Jitterbug-Bewegung, denn diese hat nur starre Dreiecke und 12 Ecken. Das Oloid ist hier ein eigenes Modell.</p>
+      <p class="note">Das Oloid ist die konvexe Hülle zweier senkrechter Kreise, die jeweils durch den Mittelpunkt des anderen gehen. Seine Fläche besteht aus lauter geraden Strecken und ist abwickelbar. Mit dem Regler siehst du, wie die Hülle von nur 3 Punkten je Kreis (ein Polyeder aus Dreiecken, wie beim Jitterbug) mit mehr Punkten zum Oloid wird. Das Oloid ist aber kein Zustand der Jitterbug-Bewegung.</p>
     </div>
   </div>
 </div>
@@ -197,45 +206,79 @@ function updateJit(th) {
 // ---------- Oloid ----------
 // Konvexe Hülle zweier Kreise (r=1): Kreis 1 in der xy-Ebene um (-1/2,0,0), Kreis 2 in der xz-Ebene um (1/2,0,0).
 const oloid = new THREE.Group(); rig.add(oloid); oloid.visible = false;
-(function buildOloid() {
-  const N = 72, pts = [];
-  for (let i = 0; i < N; i++) {
-    const t = i / N * 2 * Math.PI;
-    pts.push([-.5 + Math.cos(t), Math.sin(t), 0]);
-    pts.push([.5 + Math.cos(t), 0, Math.sin(t)]);
-  }
-  // Hülle: Flächen = Dreiecke, bei denen alle übrigen Punkte auf einer Seite liegen (n^4 bei n=144, einmalig beim Laden)
-  const eps = 1e-9, seen = new Set(), verts = [];
-  const c0 = [0, 0, 0];
-  pts.forEach(p => { c0[0] += p[0] / pts.length; c0[1] += p[1] / pts.length; c0[2] += p[2] / pts.length; });
-  const n = pts.length;
-  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) for (let k = j + 1; k < n; k++) {
-    const a = pts[i], b = pts[j], c = pts[k];
+const C1 = new THREE.Color(0xffb347), C2 = new THREE.Color(0xffffff);
+
+// k Punkte je Kreis -> Hülle (Dreiecke) und Verbindungsstrecken zwischen den Kreisen
+function hullOf(k) {
+  const pts = [];
+  for (let i = 0; i < k; i++) { const t = i / k * 2 * Math.PI; pts.push({ p: [-.5 + Math.cos(t), Math.sin(t), 0], c: 0, t }); pts.push({ p: [.5 + Math.cos(t), 0, Math.sin(t)], c: 1, t }); }
+  const n = pts.length, eps = 1e-9, tri = [], rul = new Map();
+  const c0 = [0, 0, 0]; pts.forEach(q => { for (let j = 0; j < 3; j++) c0[j] += q.p[j] / n; });
+  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) for (let m = j + 1; m < n; m++) {
+    const a = pts[i].p, b = pts[j].p, c = pts[m].p;
     let nm = cross(sub(b, a), sub(c, a)); const l = Math.hypot(...nm); if (l < 1e-9) continue;
     nm = nm.map(x => x / l);
-    let pos_ = false, neg = false;
-    for (let m = 0; m < n && !(pos_ && neg); m++) { const d = dot(nm, sub(pts[m], a)); if (d > eps) pos_ = true; else if (d < -eps) neg = true; }
-    if (pos_ && neg) continue;
-    // nach außen orientieren
-    const f = dot(nm, sub(a, c0)) >= 0 ? [a, b, c] : [a, c, b];
-    verts.push(...f.flat());
+    let up = false, dn = false;
+    for (let q = 0; q < n && !(up && dn); q++) { const d = dot(nm, sub(pts[q].p, a)); if (d > eps) up = true; else if (d < -eps) dn = true; }
+    if (up && dn) continue;
+    const f = dot(nm, sub(a, c0)) >= 0 ? [i, j, m] : [i, m, j];
+    tri.push(f);
+    for (const [x, y] of [[i, j], [j, m], [i, m]]) if (pts[x].c !== pts[y].c) { const u = pts[x].c ? y : x, v = pts[x].c ? x : y; rul.set(u + ',' + v, [u, v]); }
   }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
-  g.computeVertexNormals();
-  const mat = new THREE.MeshStandardMaterial({ color: 0x5fa8ff, roughness: .35, metalness: .1, side: THREE.DoubleSide, flatShading: false });
-  const mesh = new THREE.Mesh(g, mat); mesh.name = 'surf';
-  const wire = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0x0a1020, wireframe: true, transparent: true, opacity: .25 })); wire.visible = false; wire.name = 'wire';
-  const circle = (cx, plane, color) => {
-    const arr = []; for (let i = 0; i <= 128; i++) { const t = i / 128 * 2 * Math.PI; arr.push(new THREE.Vector3(cx + Math.cos(t), plane ? 0 : Math.sin(t), plane ? Math.sin(t) : 0)); }
-    return new THREE.Line(new THREE.BufferGeometry().setFromPoints(arr), new THREE.LineBasicMaterial({ color }));
-  };
-  oloid.add(mesh, wire, circle(-.5, 0, 0xffb347), circle(.5, 1, 0xffffff));
-  oloid.children.forEach(o => o.name = o.name || 'circ');
-})();
+  return { pts, tri, rul: [...rul.values()] };
+}
+const OLO_N = 72;
+const full = hullOf(OLO_N);
+full.rul.sort((a, b) => full.pts[a[0]].t - full.pts[b[0]].t || full.pts[a[1]].t - full.pts[b[1]].t);
+
+function surfaceGeo(h) {
+  const v = []; h.tri.forEach(f => f.forEach(i => v.push(...h.pts[i].p)));
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3)); g.computeVertexNormals(); return g;
+}
+const surfMat = new THREE.MeshStandardMaterial({ color: 0x5fa8ff, roughness: .35, metalness: .1, side: THREE.DoubleSide, transparent: true, opacity: 1 });
+const surf = new THREE.Mesh(surfaceGeo(full), surfMat);
+const wire = new THREE.Mesh(surf.geometry, new THREE.MeshBasicMaterial({ color: 0x0a1020, wireframe: true, transparent: true, opacity: .25 })); wire.visible = false;
+const circPts = (cx, pl) => { const a = []; for (let i = 0; i <= 128; i++) { const t = i / 128 * 2 * Math.PI; a.push(new THREE.Vector3(cx + Math.cos(t), pl ? 0 : Math.sin(t), pl ? Math.sin(t) : 0)); } return a; };
+const circ1 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(circPts(-.5, 0)), new THREE.LineBasicMaterial({ color: C1 }));
+const circ2 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(circPts(.5, 1)), new THREE.LineBasicMaterial({ color: C2 }));
+const rv = []; full.rul.forEach(([u, v]) => rv.push(...full.pts[u].p, ...full.pts[v].p));
+const rulGeo = new THREE.BufferGeometry(); rulGeo.setAttribute('position', new THREE.Float32BufferAttribute(rv, 3));
+const rulMat = new THREE.LineBasicMaterial({ color: 0x9fd0ff, transparent: true, opacity: .9 });
+const rulings = new THREE.LineSegments(rulGeo, rulMat);
+const mk = (x, c) => { const m = new THREE.Mesh(new THREE.SphereGeometry(.05, 16, 12), new THREE.MeshBasicMaterial({ color: c })); m.position.set(x, 0, 0); return m; };
+const centers = new THREE.Group(); centers.add(mk(-.5, C1), mk(.5, C2));
+const refine = new THREE.Mesh(new THREE.BufferGeometry(), surfMat); refine.visible = false;
+oloid.add(surf, wire, refine, rulings, circ1, circ2, centers);
 // bekannte Werte für r = 1: Oberfläche 4π r², Volumen ≈ 3,0524184684 r³
 document.getElementById('ol-a').textContent = (4 * Math.PI).toFixed(4);
 document.getElementById('ol-v').textContent = '3.0524';
+
+// Entstehung: u in [0,1] -> vier Schritte
+const STEPS = ['1 · Kreis 1 (orange) zeichnen', '2 · Kreis 2 senkrecht dazu, durch den Mittelpunkt von Kreis 1', '3 · Gleiche Winkel verbinden: Strecken zwischen den Kreisen', '4 · Strecken spannen die glatte Fläche auf: das Oloid'];
+const SEG = [0, .2, .4, .75, 1];
+const ease = x => x * x * (3 - 2 * x), seg = (u, i) => Math.min(1, Math.max(0, (u - SEG[i]) / (SEG[i+1] - SEG[i])));
+function updateBuild(u) {
+  circ1.visible = true; circ1.geometry.setDrawRange(0, Math.max(2, Math.round(129 * ease(seg(u, 0)))));
+  const s2 = seg(u, 1); circ2.visible = u > SEG[1]; circ2.geometry.setDrawRange(0, Math.max(2, Math.round(129 * ease(s2))));
+  centers.visible = u > .05;
+  const s3 = seg(u, 2); rulings.visible = u > SEG[2];
+  rulGeo.setDrawRange(0, Math.round(full.rul.length * ease(s3)) * 2);
+  const s4 = ease(seg(u, 3)); surf.visible = u > SEG[3]; surfMat.opacity = s4 * .95; surfMat.needsUpdate = false;
+  rulMat.opacity = .9 - .55 * s4;
+  const step = u < SEG[1] ? 0 : u < SEG[2] ? 1 : u < SEG[3] ? 2 : 3;
+  document.getElementById('o-step').textContent = STEPS[step];
+  document.getElementById('o-u').value = u * 100;
+}
+let buildU = 0, building = true, refineK = 0;
+// Verfeinerung: Hülle von k Punkten je Kreis (Polyeder aus Dreiecken) -> Oloid
+const hullCache = {};
+function setRefine(k) {
+  refineK = k; const on = k < OLO_N;
+  refine.visible = on; surf.visible = !on && buildU >= SEG[3]; rulings.visible = !on && buildU > SEG[2];
+  circ1.geometry.setDrawRange(0, 129); circ2.geometry.setDrawRange(0, 129); circ2.visible = circ1.visible = true; centers.visible = true;
+  document.getElementById('o-kv').textContent = on ? k + ' Ecken je Kreis · ' + (hullCache[k] || (hullCache[k] = hullOf(k))).tri.length + ' Dreiecke' : 'Oloid (Grenzfall)';
+  if (on) { refine.geometry.dispose(); refine.geometry = surfaceGeo(hullCache[k]); surfMat.opacity = .95; }
+}
 
 // ---------- Kamera / Interaktion ----------
 let yaw = .7, pitch = .35, dist = 5, mode = 'jit', theta = 0, playing = false, dir = 1, spin = true;
@@ -271,20 +314,30 @@ document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { theta = b
 $('play').onclick = () => { playing = !playing; sync(); };
 function sync() { $('play').classList.toggle('on', playing); $('play').textContent = playing ? '❚❚ Pause' : '▶ Animation'; }
 $('o-spin').onclick = e => { spin = !spin; e.target.classList.toggle('on', spin); };
-$('o-wire').onclick = e => { const w = oloid.children.find(o => o.name === 'wire'); w.visible = !w.visible; e.target.classList.toggle('on', w.visible); };
+$('o-wire').onclick = e => { wire.visible = !wire.visible; wire.geometry = refine.visible ? refine.geometry : surf.geometry; e.target.classList.toggle('on', wire.visible); };
+$('b-play').onclick = () => { building = !building; if (building && buildU >= 1) buildU = 0; $('b-play').textContent = building ? '❚❚ Pause' : '▶ Abspielen'; $('b-play').classList.toggle('on', building); };
+$('b-rep').onclick = () => { $('o-k').value = OLO_N; setRefine(OLO_N); buildU = 0; building = true; $('b-play').textContent = '❚❚ Pause'; $('b-play').classList.add('on'); };
+$('o-u').addEventListener('input', e => { buildU = e.target.value / 100; building = false; $('o-k').value = OLO_N; if (refineK !== OLO_N) setRefine(OLO_N); $('b-play').textContent = '▶ Abspielen'; $('b-play').classList.remove('on'); });
+$('o-k').addEventListener('input', e => { building = false; $('b-play').textContent = '▶ Abspielen'; $('b-play').classList.remove('on'); if (+e.target.value === OLO_N) buildU = 1; setRefine(+e.target.value); if (wire.visible) wire.geometry = refine.visible ? refine.geometry : surf.geometry; });
 
 let t0 = performance.now();
 function frame(t) {
   const dt = Math.min(.05, (t - t0) / 1000); t0 = t;
   if (playing) { theta += dir * dt * .5; if (theta >= Math.PI) { theta = Math.PI; dir = -1; } else if (theta <= 0) { theta = 0; dir = 1; } }
-  if (mode === 'jit') updateJit(theta); else if (spin) oloid.rotation.x += dt * .6;
+  if (mode === 'jit') updateJit(theta);
+  else {
+    if (building && refineK === OLO_N) { buildU = Math.min(1, buildU + dt / 14); if (buildU >= 1) { building = false; $('b-play').textContent = '▶ Abspielen'; $('b-play').classList.remove('on'); } }
+    if (refineK === OLO_N) updateBuild(buildU);
+    if (spin) oloid.rotation.x += dt * .35;
+  }
   camera.position.set(dist * Math.cos(pitch) * Math.sin(yaw), dist * Math.sin(pitch), dist * Math.cos(pitch) * Math.cos(yaw));
   camera.up.set(0, 1, 0); camera.lookAt(0, 0, 0);
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
-window.__app = { pose, volume, TH_ICO, setMode, oloid, quads, tris };
+setRefine(OLO_N); updateBuild(0);
+window.__app = { pose, volume, TH_ICO, setMode, oloid, quads, tris, setU: u => { buildU = u; building = false; }, setRefine };
 </script>
 </body>
 </html>
