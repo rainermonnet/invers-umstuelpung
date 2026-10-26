@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jitterbug invers WebGL</title>
+<style>
+  :root { --bg:#0f1218; --panel:#171c26; --fg:#e8ecf3; --mut:#8c97aa; --acc:#ffb347; --line:#2a3242; }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f3f5f9; --panel:#fff; --fg:#161a22; --mut:#5d6778; --acc:#d9730d; --line:#d5dbe6; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui,sans-serif; }
+  .wrap { max-width:1100px; margin:0 auto; padding:16px; display:grid; gap:16px; grid-template-columns:1fr 330px; }
+  @media (max-width:820px) { .wrap { grid-template-columns:1fr; } }
+  h1 { font-size:20px; margin:0 0 4px; }
+  p.sub { margin:0 0 12px; color:var(--mut); }
+  #stage { width:100%; aspect-ratio:1; background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; touch-action:none; cursor:grab; }
+  #stage canvas { width:100%; height:100%; display:block; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .panel h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:14px 0 6px; }
+  .panel h2:first-child { margin-top:0; }
+  input[type=range] { width:100%; accent-color:var(--acc); }
+  .btns { display:flex; flex-wrap:wrap; gap:6px; }
+  button { background:transparent; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:6px 10px; font:inherit; cursor:pointer; }
+  button:hover, button.on { border-color:var(--acc); color:var(--acc); }
+  table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  td { padding:3px 0; } td:last-child { text-align:right; }
+  .note { color:var(--mut); font-size:13px; margin:6px 0 0; }
+  .shape { font-weight:600; color:var(--acc); }
+  .hide { display:none; }
+  #fail { padding:24px; color:var(--mut); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h1>Jitterbug invers · Oloid</h1>
+    <p class="sub">WebGL · ziehen zum Drehen, Mausrad/Pinch zum Zoomen</p>
+    <div id="stage"></div>
+  </div>
+  <div class="panel">
+    <div class="btns">
+      <button id="m-jit" class="on">Jitterbug invers</button>
+      <button id="m-olo">Oloid</button>
+    </div>
+
+    <div id="jit">
+      <h2>Twistwinkel θ (0° – 180°)</h2>
+      <input id="th" type="range" min="0" max="180" step="0.01" value="0">
+      <div class="btns" style="margin-top:8px">
+        <button id="play">▶ Animation</button>
+        <button data-t="0">Kubo</button>
+        <button data-t="ico">Ikosa</button>
+        <button data-t="60">Okta</button>
+        <button data-t="90">Mitte</button>
+        <button data-t="120">Okta′</button>
+        <button data-t="180">Kubo′</button>
+      </div>
+      <h2>Live-Werte</h2>
+      <table>
+        <tr><td>Form</td><td class="shape" id="o-shape"></td></tr>
+        <tr><td>θ</td><td id="o-th"></td></tr>
+        <tr><td>Umkugelradius R</td><td id="o-r"></td></tr>
+        <tr><td>Dreiecksabstand zum Zentrum</td><td id="o-d"></td></tr>
+        <tr><td>Volumen (Tetraeder-Einheiten)</td><td id="o-t"></td></tr>
+      </table>
+      <p class="note">Bei 60° ist der Jitterbug ein Oktaeder. Die Dreiecke wandern weiter durch das Zentrum (Abstand wird negativ, Volumen negativ) und die Form wird umgestülpt. Bei 120° ist sie wieder ein Oktaeder, bei 180° ein Kuboktaeder, aber von innen nach außen gekehrt (Volumen −20).</p>
+    </div>
+
+    <div id="olo" class="hide">
+      <h2>Oloid</h2>
+      <div class="btns">
+        <button id="o-spin" class="on">Drehung</button>
+        <button id="o-wire">Drahtgitter</button>
+      </div>
+      <h2>Werte (r = 1)</h2>
+      <table>
+        <tr><td>Oberfläche</td><td id="ol-a"></td></tr>
+        <tr><td>Volumen</td><td id="ol-v"></td></tr>
+      </table>
+      <p class="note">Das Oloid ist die konvexe Hülle zweier senkrecht stehender Kreise, die jeweils durch den Mittelpunkt des anderen gehen. Seine Oberfläche ist abwickelbar. Es ist kein Zustand der Jitterbug-Bewegung, denn diese hat nur starre Dreiecke und 12 Ecken. Das Oloid ist hier ein eigenes Modell.</p>
+    </div>
+  </div>
+</div>
+<script src="three.min.js"></script>
+<script>
+'use strict';
+const stage = document.getElementById('stage');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); }
+catch (e) { stage.innerHTML = '<div id="fail">WebGL ist in diesem Browser nicht verfügbar.</div>'; throw e; }
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x445066, 0.55));
+const sun = new THREE.DirectionalLight(0xffffff, 0.7); sun.position.set(3, 4, 5); scene.add(sun);
+const rig = new THREE.Group(); scene.add(rig);
+
+// ---------- Jitterbug ----------
+const S3 = Math.sqrt(3), A = Math.SQRT2;
+const cross = (u, v) => [u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
+const dot = (u, v) => u[0]*v[0]+u[1]*v[1]+u[2]*v[2];
+const sub = (u, v) => [u[0]-v[0], u[1]-v[1], u[2]-v[2]];
+function rodrigues(v, n, a) {
+  const c = Math.cos(a), s = Math.sin(a), k = dot(n, v) * (1 - c), x = cross(n, v);
+  return [v[0]*c + x[0]*s + n[0]*k, v[1]*c + x[1]*s + n[1]*k, v[2]*c + x[2]*s + n[2]*k];
+}
+const cubo = (s, k) => [[s[0],s[1],0],[s[0],0,s[2]],[0,s[1],s[2]]][k];
+const signs = [];
+for (const sx of [1,-1]) for (const sy of [1,-1]) for (const sz of [1,-1]) signs.push([sx, sy, sz]);
+const vids = {}, vlist = [];
+const tris = signs.map((s, i) => {
+  const ids = [0,1,2].map(k => { const key = cubo(s, k).join(','); if (!(key in vids)) { vids[key] = vlist.length; vlist.push([i, k]); } return vids[key]; });
+  return { s, p: s[0]*s[1]*s[2], n: s.map(x => x / S3), ids, wind: ids, off: [0,1,2].map(k => cubo(s, k).map((x, j) => x - 2/3*s[j])) };
+});
+const coAt = i => cubo(tris[vlist[i][0]].s, vlist[i][1]);
+const quads = [];
+for (let j = 0; j < 3; j++) for (const sg of [1,-1]) {
+  const u = (j+1)%3, w = (j+2)%3;
+  const ids = vlist.map((_, i) => i).filter(i => coAt(i)[j] === sg)
+    .sort((a, b) => Math.atan2(coAt(a)[w], coAt(a)[u]) - Math.atan2(coAt(b)[w], coAt(b)[u]));
+  quads.push(ids);
+}
+// Umlaufsinn so festlegen, dass bei θ=0 alle Normalen nach außen zeigen (dann ist das Volumen vorzeichenbehaftet)
+function pose(th) {
+  const t0 = tris[0], r = rodrigues(t0.off[0], t0.n, th);
+  const d = -r[2] / t0.n[2];
+  const V = new Array(12);
+  tris.forEach(t => t.off.forEach((o, k) => { const q = rodrigues(o, t.n, t.p * th); V[t.ids[k]] = [q[0]+d*t.n[0], q[1]+d*t.n[1], q[2]+d*t.n[2]]; }));
+  return { d, V };
+}
+const V0 = pose(0).V;
+const outward = (f, V) => { const [a, b, c] = f.map(i => V[i]); const n = cross(sub(b, a), sub(c, a)); return dot(n, [a[0]+b[0]+c[0], a[1]+b[1]+c[1], a[2]+b[2]+c[2]]) > 0; };
+tris.forEach(t => { if (!outward(t.ids, V0)) t.wind = [t.ids[0], t.ids[2], t.ids[1]]; });
+quads.forEach(q => { if (!outward([q[0], q[1], q[2]], V0)) q.reverse(); });
+const len = (a, b) => Math.hypot(a[0]-b[0], a[1]-b[1], a[2]-b[2]);
+function quadTris(q, V) {
+  return len(V[q[0]], V[q[2]]) <= len(V[q[1]], V[q[3]]) ? [[q[0], q[1], q[2]], [q[0], q[2], q[3]]] : [[q[1], q[2], q[3]], [q[1], q[3], q[0]]];
+}
+function volume(V) {
+  const faces = tris.map(t => t.wind); quads.forEach(q => faces.push(...quadTris(q, V)));
+  return faces.reduce((s, f) => { const [a, b, c] = f.map(i => V[i]); return s + dot(a, cross(b, c)) / 6; }, 0);
+}
+function icoTheta() {
+  const f = th => { const V = pose(th).V, q = quads[0]; return Math.min(len(V[q[0]], V[q[2]]), len(V[q[1]], V[q[3]])) - A; };
+  let lo = 0, hi = Math.PI / 3;
+  for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; (f(m) > 0 ? lo = m : hi = m); }
+  return (lo + hi) / 2;
+}
+const TH_ICO = icoTheta();
+
+const ORANGE = [1, .70, .28], BLUE = [.35, .63, 1], GREY = [.6, .68, .76];
+const NF = 8 + 12;                       // 8 Dreiecke + 6 Quadrate à 2 Dreiecke
+const pos = new Float32Array(NF * 9), nor = new Float32Array(NF * 9), col = new Float32Array(NF * 9);
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+geo.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+const jitMesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: .55, metalness: .05, transparent: true, opacity: .88 }));
+const edgePos = new Float32Array(24 * 6);
+const eGeo = new THREE.BufferGeometry(); eGeo.setAttribute('position', new THREE.BufferAttribute(edgePos, 3));
+const edges = new THREE.LineSegments(eGeo, new THREE.LineBasicMaterial({ color: 0x222831 }));
+const dots = vlist.map(() => { const m = new THREE.Mesh(new THREE.SphereGeometry(.045, 12, 8), new THREE.MeshBasicMaterial({ color: 0x222831 })); return m; });
+const jit = new THREE.Group(); jit.add(jitMesh, edges, ...dots); rig.add(jit);
+
+function updateJit(th) {
+  const P = pose(th), V = P.V;
+  const faces = [];
+  tris.forEach(t => faces.push([t.wind, t.p > 0 ? ORANGE : BLUE]));
+  quads.forEach(q => quadTris(q, V).forEach(f => faces.push([f, GREY])));
+  faces.forEach(([f, c], i) => {
+    const [a, b, d] = f.map(k => V[k]), n = cross(sub(b, a), sub(d, a)), l = Math.hypot(...n) || 1;
+    [a, b, d].forEach((p, j) => { const o = i * 9 + j * 3; pos.set(p, o); nor.set([n[0]/l, n[1]/l, n[2]/l], o); col.set(c, o); });
+  });
+  geo.attributes.position.needsUpdate = geo.attributes.normal.needsUpdate = geo.attributes.color.needsUpdate = true;
+  geo.computeBoundingSphere();
+  let e = 0;
+  tris.forEach(t => { for (let i = 0; i < 3; i++) { edgePos.set(V[t.ids[i]], e); edgePos.set(V[t.ids[(i+1)%3]], e + 3); e += 6; } });
+  eGeo.attributes.position.needsUpdate = true; eGeo.computeBoundingSphere();
+  V.forEach((p, i) => dots[i].position.set(p[0], p[1], p[2]));
+
+  const deg = th * 180 / Math.PI, ico = TH_ICO * 180 / Math.PI;
+  const near = (x, y) => Math.abs(x - y) < 0.35;
+  const shape = near(deg, 0) ? 'Kuboktaeder' : near(deg, ico) ? 'Ikosaeder' : near(deg, 60) ? 'Oktaeder' : near(deg, 120) ? 'Oktaeder (umgestülpt)'
+    : near(deg, 180 - ico) ? 'Ikosaeder (umgestülpt)' : near(deg, 180) ? 'Kuboktaeder (umgestülpt)' : P.d < 0 ? 'Zwischenform, umgestülpt' : 'Zwischenform';
+  const set = (id, t) => document.getElementById(id).textContent = t;
+  set('o-shape', shape); set('o-th', deg.toFixed(2) + '°');
+  set('o-r', (Math.hypot(...V[0]) / A).toFixed(4) + ' a');
+  set('o-d', (P.d / A).toFixed(4) + ' a');
+  set('o-t', (volume(V) / (A**3 / (6 * Math.SQRT2))).toFixed(2));
+  document.getElementById('th').value = deg;
+}
+
+// ---------- Oloid ----------
+// Konvexe Hülle zweier Kreise (r=1): Kreis 1 in der xy-Ebene um (-1/2,0,0), Kreis 2 in der xz-Ebene um (1/2,0,0).
+const oloid = new THREE.Group(); rig.add(oloid); oloid.visible = false;
+(function buildOloid() {
+  const N = 72, pts = [];
+  for (let i = 0; i < N; i++) {
+    const t = i / N * 2 * Math.PI;
+    pts.push([-.5 + Math.cos(t), Math.sin(t), 0]);
+    pts.push([.5 + Math.cos(t), 0, Math.sin(t)]);
+  }
+  // Hülle: Flächen = Dreiecke, bei denen alle übrigen Punkte auf einer Seite liegen (n^4 bei n=144, einmalig beim Laden)
+  const eps = 1e-9, seen = new Set(), verts = [];
+  const c0 = [0, 0, 0];
+  pts.forEach(p => { c0[0] += p[0] / pts.length; c0[1] += p[1] / pts.length; c0[2] += p[2] / pts.length; });
+  const n = pts.length;
+  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) for (let k = j + 1; k < n; k++) {
+    const a = pts[i], b = pts[j], c = pts[k];
+    let nm = cross(sub(b, a), sub(c, a)); const l = Math.hypot(...nm); if (l < 1e-9) continue;
+    nm = nm.map(x => x / l);
+    let pos_ = false, neg = false;
+    for (let m = 0; m < n && !(pos_ && neg); m++) { const d = dot(nm, sub(pts[m], a)); if (d > eps) pos_ = true; else if (d < -eps) neg = true; }
+    if (pos_ && neg) continue;
+    // nach außen orientieren
+    const f = dot(nm, sub(a, c0)) >= 0 ? [a, b, c] : [a, c, b];
+    verts.push(...f.flat());
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+  g.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({ color: 0x5fa8ff, roughness: .35, metalness: .1, side: THREE.DoubleSide, flatShading: false });
+  const mesh = new THREE.Mesh(g, mat); mesh.name = 'surf';
+  const wire = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0x0a1020, wireframe: true, transparent: true, opacity: .25 })); wire.visible = false; wire.name = 'wire';
+  const circle = (cx, plane, color) => {
+    const arr = []; for (let i = 0; i <= 128; i++) { const t = i / 128 * 2 * Math.PI; arr.push(new THREE.Vector3(cx + Math.cos(t), plane ? 0 : Math.sin(t), plane ? Math.sin(t) : 0)); }
+    return new THREE.Line(new THREE.BufferGeometry().setFromPoints(arr), new THREE.LineBasicMaterial({ color }));
+  };
+  oloid.add(mesh, wire, circle(-.5, 0, 0xffb347), circle(.5, 1, 0xffffff));
+  oloid.children.forEach(o => o.name = o.name || 'circ');
+})();
+// bekannte Werte für r = 1: Oberfläche 4π r², Volumen ≈ 3,0524184684 r³
+document.getElementById('ol-a').textContent = (4 * Math.PI).toFixed(4);
+document.getElementById('ol-v').textContent = '3.0524';
+
+// ---------- Kamera / Interaktion ----------
+let yaw = .7, pitch = .35, dist = 5, mode = 'jit', theta = 0, playing = false, dir = 1, spin = true;
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage); resize();
+const pointers = new Map();
+stage.addEventListener('pointerdown', e => { stage.setPointerCapture(e.pointerId); pointers.set(e.pointerId, e); stage.style.cursor = 'grabbing'; });
+stage.addEventListener('pointerup', e => { pointers.delete(e.pointerId); stage.style.cursor = 'grab'; });
+stage.addEventListener('pointermove', e => {
+  const prev = pointers.get(e.pointerId); if (!prev) return;
+  if (pointers.size === 2) {
+    const [a, b] = [...pointers.values()]; pointers.set(e.pointerId, e); const [c, d] = [...pointers.values()];
+    const k = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) / Math.hypot(c.clientX - d.clientX, c.clientY - d.clientY);
+    if (isFinite(k) && k > 0) dist = Math.min(15, Math.max(3, dist * k));
+  } else {
+    yaw -= (e.clientX - prev.clientX) * .008; pitch = Math.max(-1.5, Math.min(1.5, pitch + (e.clientY - prev.clientY) * .008)); pointers.set(e.pointerId, e);
+  }
+});
+stage.addEventListener('wheel', e => { e.preventDefault(); dist = Math.min(15, Math.max(3, dist * Math.exp(e.deltaY * .001))); }, { passive: false });
+
+const $ = id => document.getElementById(id);
+function setMode(m) {
+  mode = m; jit.visible = m === 'jit'; oloid.visible = m === 'olo';
+  $('jit').classList.toggle('hide', m !== 'jit'); $('olo').classList.toggle('hide', m !== 'olo');
+  $('m-jit').classList.toggle('on', m === 'jit'); $('m-olo').classList.toggle('on', m === 'olo');
+}
+$('m-jit').onclick = () => setMode('jit'); $('m-olo').onclick = () => setMode('olo');
+$('th').addEventListener('input', e => { theta = e.target.value * Math.PI / 180; playing = false; sync(); });
+document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { theta = b.dataset.t === 'ico' ? TH_ICO : b.dataset.t * Math.PI / 180; playing = false; sync(); });
+$('play').onclick = () => { playing = !playing; sync(); };
+function sync() { $('play').classList.toggle('on', playing); $('play').textContent = playing ? '❚❚ Pause' : '▶ Animation'; }
+$('o-spin').onclick = e => { spin = !spin; e.target.classList.toggle('on', spin); };
+$('o-wire').onclick = e => { const w = oloid.children.find(o => o.name === 'wire'); w.visible = !w.visible; e.target.classList.toggle('on', w.visible); };
+
+let t0 = performance.now();
+function frame(t) {
+  const dt = Math.min(.05, (t - t0) / 1000); t0 = t;
+  if (playing) { theta += dir * dt * .5; if (theta >= Math.PI) { theta = Math.PI; dir = -1; } else if (theta <= 0) { theta = 0; dir = 1; } }
+  if (mode === 'jit') updateJit(theta); else if (spin) oloid.rotation.x += dt * .6;
+  camera.position.set(dist * Math.cos(pitch) * Math.sin(yaw), dist * Math.sin(pitch), dist * Math.cos(pitch) * Math.cos(yaw));
+  camera.up.set(0, 1, 0); camera.lookAt(0, 0, 0);
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.__app = { pose, volume, TH_ICO, setMode, oloid, quads, tris };
+</script>
+</body>
+</html>
