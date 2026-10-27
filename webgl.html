@@ -104,7 +104,7 @@ stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x445066, 0.55));
+scene.add(new THREE.HemisphereLight(0xffffff, 0xffffff, 0.85));
 const sun = new THREE.DirectionalLight(0xffffff, 0.7); sun.position.set(3, 4, 5); scene.add(sun);
 const rig = new THREE.Group(); scene.add(rig);
 
@@ -161,9 +161,9 @@ function icoTheta() {
 }
 const TH_ICO = icoTheta();
 
-// Goethes Farbenlehre: Polarität Gelb (Licht, Plus) und Blau (Finsternis, Minus), Steigerung ins Rote bzw. Violette, Grün als Mischung der Pole.
+// Warme Reihe Gelb – Orange – Rot (Goethe: Steigerung): Quadrate Gelb, Dreiecke Orange und Rot; die Umstülpung dunkelt nach.
 const hex = h => [(h >> 16 & 255) / 255, (h >> 8 & 255) / 255, (h & 255) / 255];
-const PLUS = [0xf6d02f, 0xe8731a, 0xb3225f].map(hex), MINUS = [0x2f5fb8, 0x5b3a9e, 0x34206b].map(hex), GRUEN = hex(0x3f9d72);
+const PLUS = [0xf58a1f, 0xee6a1a, 0xd9461c].map(hex), MINUS = [0xd32f1f, 0xb02020, 0x7d1620].map(hex), GRUEN = hex(0xf7d02c);
 const ramp = (st, x) => { const f = Math.min(1, Math.max(0, x)) * (st.length - 1), i = Math.min(st.length - 2, Math.floor(f)), t = f - i; return st[i].map((v, j) => v + (st[i+1][j] - v) * t); };
 const NF = 8 + 12;                       // 8 Dreiecke + 6 Quadrate à 2 Dreiecke
 const pos = new Float32Array(NF * 9), nor = new Float32Array(NF * 9), col = new Float32Array(NF * 9);
@@ -210,7 +210,7 @@ function updateJit(th) {
 // ---------- Oloid ----------
 // Konvexe Hülle zweier Kreise (r=1): Kreis 1 in der xy-Ebene um (-1/2,0,0), Kreis 2 in der xz-Ebene um (1/2,0,0).
 const oloid = new THREE.Group(); rig.add(oloid); oloid.visible = false;
-const C1 = new THREE.Color(0xf6d02f), C2 = new THREE.Color(0x2f5fb8);   // Gelb und Blau, die Pole
+const C1 = new THREE.Color(0xf6d02f), C2 = new THREE.Color(0xd32f1f);   // Gelb und Rot, mit Orange dazwischen
 
 // k Punkte je Kreis -> Hülle (Dreiecke) und Verbindungsstrecken zwischen den Kreisen
 function hullOf(k) {
@@ -261,7 +261,7 @@ document.getElementById('ol-a').textContent = (4 * Math.PI).toFixed(4);
 document.getElementById('ol-v').textContent = '3.0524';
 
 // Entstehung: u in [0,1] -> vier Schritte
-const STEPS = ['1 · Kreis 1 (gelb) zeichnen', '2 · Kreis 2 (blau) senkrecht dazu, durch den Mittelpunkt von Kreis 1', '3 · Gleiche Winkel verbinden: Strecken zwischen den Kreisen', '4 · Strecken spannen die glatte Fläche auf: das Oloid'];
+const STEPS = ['1 · Kreis 1 (gelb) zeichnen', '2 · Kreis 2 (rot) senkrecht dazu, durch den Mittelpunkt von Kreis 1', '3 · Gleiche Winkel verbinden: Strecken zwischen den Kreisen', '4 · Strecken spannen die glatte Fläche auf: das Oloid'];
 const SEG = [0, .2, .4, .75, 1];
 const ease = x => x * x * (3 - 2 * x), seg = (u, i) => Math.min(1, Math.max(0, (u - SEG[i]) / (SEG[i+1] - SEG[i])));
 function updateBuild(u) {
