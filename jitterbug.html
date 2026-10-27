@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jitterbug invers</title>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="site"><div><b>Umstülpungen</b>
+  <a href="index.html">Start</a><a href="jitterbug.html" aria-current="page">Jitterbug</a><a href="oloid.html">Oloid</a></div></header>
+<main>
+  <h1>Der Jitterbug und seine Umstülpung</h1>
+  <p class="lead">Ein Kuboktaeder, das sich ohne Bruch zum Oktaeder zusammenfaltet, durch sich selbst hindurchwandert und von innen nach außen gekehrt wieder auftaucht.</p>
+  <div class="bar"></div>
+
+  <div class="app">
+    <div id="stage"></div>
+    <div class="panel">
+      <h3>Twistwinkel θ (0° – 180°)</h3>
+      <input id="th" type="range" min="0" max="180" step="0.01" value="0">
+      <div class="btns" style="margin-top:8px">
+        <button id="play">▶ Animation</button>
+        <button data-t="0">Kubo</button><button data-t="ico">Ikosa</button><button data-t="60">Okta</button>
+        <button data-t="90">Mitte</button><button data-t="120">Okta′</button><button data-t="180">Kubo′</button>
+      </div>
+      <h3>Live-Werte</h3>
+      <table>
+        <tr><td>Form</td><td class="shape" id="o-shape"></td></tr>
+        <tr><td>θ</td><td id="o-th"></td></tr>
+        <tr><td>Umkugelradius R</td><td id="o-r"></td></tr>
+        <tr><td>Dreiecksabstand zum Zentrum</td><td id="o-d"></td></tr>
+        <tr><td>Volumen (Tetraeder-Einheiten)</td><td id="o-t"></td></tr>
+      </table>
+      <p class="note">Ziehen zum Drehen, Mausrad oder Pinch zum Zoomen. Die Farben folgen Goethes warmer Reihe: Quadrate gelb, Dreiecke orange und rot. Die Umstülpung dunkelt sie nach.</p>
+    </div>
+  </div>
+
+  <div class="text">
+    <h2>Worum geht es?</h2>
+    <p>Der <b>Jitterbug</b> ist eine Bewegung, die Richard Buckminster Fuller beschrieben hat (<i>Synergetics</i>, 1975). Ausgangspunkt ist das <b>Kuboktaeder</b> mit 12 Ecken, 8 Dreiecken und 6 Quadraten. Die 8 Dreiecke bleiben dabei starr und gleichseitig. Jedes dreht sich um die Raumdiagonale, auf der sein Mittelpunkt liegt, und schiebt sich dabei zum Zentrum hin. Die Quadrate geben nach: Sie verziehen sich zu Rhomben und klappen am Ende zu Strecken zusammen.</p>
+    <p>Der Drehwinkel θ steuert alles. Benachbarte Dreiecke drehen gegenläufig, die vier „positiven“ und die vier „negativen“ (im Modell Orange und Rot).</p>
+
+    <h2>Die Stationen</h2>
+    <table class="data">
+      <tr><th>θ</th><th>Form</th><th>Volumen (Tetraeder-Einheiten)</th></tr>
+      <tr><td>0°</td><td>Kuboktaeder</td><td>20</td></tr>
+      <tr><td>22,24°</td><td>Ikosaeder (alle Kanten gleich lang)</td><td>18,51</td></tr>
+      <tr><td>60°</td><td>Oktaeder</td><td>4</td></tr>
+      <tr><td>90°</td><td>Die Dreiecke liegen durch das Zentrum</td><td>0</td></tr>
+      <tr><td>120°</td><td>Oktaeder, umgestülpt</td><td>−4</td></tr>
+      <tr><td>157,76°</td><td>Ikosaeder, umgestülpt</td><td>−18,51</td></tr>
+      <tr><td>180°</td><td>Kuboktaeder, umgestülpt</td><td>−20</td></tr>
+    </table>
+    <p>Das negative Volumen ist keine Spielerei. Es zeigt, dass die Fläche ihre Orientierung gewechselt hat: Was innen war, ist jetzt außen. Die Volumenzahlen sind für gleiche Kantenlänge berechnet und im Modell nachgerechnet. Zwischen etwa 65° und 115° sind die Rhomben windschief und die Fläche durchdringt sich. Dort ist die Volumenangabe nur eine Näherung (sie hängt davon ab, wie man die Rhomben in Dreiecke teilt) und im Live-Wert mit „≈“ gekennzeichnet. Verlässlich sind die Werte an den Stationen oben.</p>
+
+    <h2>Hinweise zur Quelle</h2>
+    <div class="box">
+      <p>Das Ausgangsdokument beschreibt die Bewegung als Drehung aller Ecken um die z-Achse. Das ergibt keinen Jitterbug. Hier dreht sich jedes Dreieck um seine eigene Raumdiagonale.</p>
+      <p>Für gleiche Kantenlänge ist das Kuboktaeder 5-mal so groß wie das Oktaeder (20 : 4), nicht 2,5-mal. Das Ikosaeder hat 18,51 Tetraeder-Einheiten, nicht 18.</p>
+      <p>Das Ikosaeder entsteht bei θ ≈ 22,24° und nicht bei 22,5°.</p>
+    </div>
+    <p><a href="oloid.html">Weiter zum Oloid →</a></p>
+  </div>
+</main>
+<footer>Modell: Kinematik selbst gerechnet (starre Dreiecke, Zentrumsabstand aus der Eckenbedingung), Darstellung mit three.js.</footer>
+<script src="three.min.js"></script>
+<script src="stage.js"></script>
+<script>
+const stage = makeStage(document.getElementById('stage'), { dist: 5 });
+const { scene, rig } = stage;
+// ---------- Jitterbug ----------
+const S3 = Math.sqrt(3), A = Math.SQRT2;
+const cross = (u, v) => [u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
+const dot = (u, v) => u[0]*v[0]+u[1]*v[1]+u[2]*v[2];
+const sub = (u, v) => [u[0]-v[0], u[1]-v[1], u[2]-v[2]];
+function rodrigues(v, n, a) {
+  const c = Math.cos(a), s = Math.sin(a), k = dot(n, v) * (1 - c), x = cross(n, v);
+  return [v[0]*c + x[0]*s + n[0]*k, v[1]*c + x[1]*s + n[1]*k, v[2]*c + x[2]*s + n[2]*k];
+}
+const cubo = (s, k) => [[s[0],s[1],0],[s[0],0,s[2]],[0,s[1],s[2]]][k];
+const signs = [];
+for (const sx of [1,-1]) for (const sy of [1,-1]) for (const sz of [1,-1]) signs.push([sx, sy, sz]);
+const vids = {}, vlist = [];
+const tris = signs.map((s, i) => {
+  const ids = [0,1,2].map(k => { const key = cubo(s, k).join(','); if (!(key in vids)) { vids[key] = vlist.length; vlist.push([i, k]); } return vids[key]; });
+  return { s, p: s[0]*s[1]*s[2], n: s.map(x => x / S3), ids, wind: ids, off: [0,1,2].map(k => cubo(s, k).map((x, j) => x - 2/3*s[j])) };
+});
+const coAt = i => cubo(tris[vlist[i][0]].s, vlist[i][1]);
+const quads = [];
+for (let j = 0; j < 3; j++) for (const sg of [1,-1]) {
+  const u = (j+1)%3, w = (j+2)%3;
+  const ids = vlist.map((_, i) => i).filter(i => coAt(i)[j] === sg)
+    .sort((a, b) => Math.atan2(coAt(a)[w], coAt(a)[u]) - Math.atan2(coAt(b)[w], coAt(b)[u]));
+  quads.push(ids);
+}
+// Umlaufsinn so festlegen, dass bei θ=0 alle Normalen nach außen zeigen (dann ist das Volumen vorzeichenbehaftet)
+function pose(th) {
+  const t0 = tris[0], r = rodrigues(t0.off[0], t0.n, th);
+  const d = -r[2] / t0.n[2];
+  const V = new Array(12);
+  tris.forEach(t => t.off.forEach((o, k) => { const q = rodrigues(o, t.n, t.p * th); V[t.ids[k]] = [q[0]+d*t.n[0], q[1]+d*t.n[1], q[2]+d*t.n[2]]; }));
+  return { d, V };
+}
+const V0 = pose(0).V;
+const outward = (f, V) => { const [a, b, c] = f.map(i => V[i]); const n = cross(sub(b, a), sub(c, a)); return dot(n, [a[0]+b[0]+c[0], a[1]+b[1]+c[1], a[2]+b[2]+c[2]]) > 0; };
+tris.forEach(t => { if (!outward(t.ids, V0)) t.wind = [t.ids[0], t.ids[2], t.ids[1]]; });
+quads.forEach(q => { if (!outward([q[0], q[1], q[2]], V0)) q.reverse(); });
+const len = (a, b) => Math.hypot(a[0]-b[0], a[1]-b[1], a[2]-b[2]);
+function quadTris(q, V) {
+  return len(V[q[0]], V[q[2]]) <= len(V[q[1]], V[q[3]]) ? [[q[0], q[1], q[2]], [q[0], q[2], q[3]]] : [[q[1], q[2], q[3]], [q[1], q[3], q[0]]];
+}
+function volume(V) {
+  const faces = tris.map(t => t.wind); quads.forEach(q => faces.push(...quadTris(q, V)));
+  return faces.reduce((s, f) => { const [a, b, c] = f.map(i => V[i]); return s + dot(a, cross(b, c)) / 6; }, 0);
+}
+function icoTheta() {
+  const f = th => { const V = pose(th).V, q = quads[0]; return Math.min(len(V[q[0]], V[q[2]]), len(V[q[1]], V[q[3]])) - A; };
+  let lo = 0, hi = Math.PI / 3;
+  for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; (f(m) > 0 ? lo = m : hi = m); }
+  return (lo + hi) / 2;
+}
+const TH_ICO = icoTheta();
+
+// Warme Reihe Gelb – Orange – Rot (Goethe: Steigerung): Quadrate Gelb, Dreiecke Orange und Rot; die Umstülpung dunkelt nach.
+const hex = h => [(h >> 16 & 255) / 255, (h >> 8 & 255) / 255, (h & 255) / 255];
+const PLUS = [0xf58a1f, 0xee6a1a, 0xd9461c].map(hex), MINUS = [0xd32f1f, 0xb02020, 0x7d1620].map(hex), GRUEN = hex(0xf7d02c);
+const ramp = (st, x) => { const f = Math.min(1, Math.max(0, x)) * (st.length - 1), i = Math.min(st.length - 2, Math.floor(f)), t = f - i; return st[i].map((v, j) => v + (st[i+1][j] - v) * t); };
+const NF = 8 + 12;                       // 8 Dreiecke + 6 Quadrate à 2 Dreiecke
+const pos = new Float32Array(NF * 9), nor = new Float32Array(NF * 9), col = new Float32Array(NF * 9);
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+geo.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+const jitMesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: .55, metalness: .05, transparent: true, opacity: .88 }));
+const edgePos = new Float32Array(24 * 6);
+const eGeo = new THREE.BufferGeometry(); eGeo.setAttribute('position', new THREE.BufferAttribute(edgePos, 3));
+const edges = new THREE.LineSegments(eGeo, new THREE.LineBasicMaterial({ color: 0x2a2a2e }));
+const dots = vlist.map(() => { const m = new THREE.Mesh(new THREE.SphereGeometry(.045, 12, 8), new THREE.MeshBasicMaterial({ color: 0x2a2a2e })); return m; });
+const jit = new THREE.Group(); jit.add(jitMesh, edges, ...dots); rig.add(jit);
+
+function updateJit(th) {
+  const P = pose(th), V = P.V;
+  const faces = [];
+  const gr = (1 - P.d / (2 / S3)) / 2;   // 0 = Ausgangsform, 1 = voll umgestülpt
+  tris.forEach(t => faces.push([t.wind, ramp(t.p > 0 ? PLUS : MINUS, gr)]));
+  quads.forEach(q => quadTris(q, V).forEach(f => faces.push([f, GRUEN])));
+  faces.forEach(([f, c], i) => {
+    const [a, b, d] = f.map(k => V[k]), n = cross(sub(b, a), sub(d, a)), l = Math.hypot(...n) || 1;
+    [a, b, d].forEach((p, j) => { const o = i * 9 + j * 3; pos.set(p, o); nor.set([n[0]/l, n[1]/l, n[2]/l], o); col.set(c, o); });
+  });
+  geo.attributes.position.needsUpdate = geo.attributes.normal.needsUpdate = geo.attributes.color.needsUpdate = true;
+  geo.computeBoundingSphere();
+  let e = 0;
+  tris.forEach(t => { for (let i = 0; i < 3; i++) { edgePos.set(V[t.ids[i]], e); edgePos.set(V[t.ids[(i+1)%3]], e + 3); e += 6; } });
+  eGeo.attributes.position.needsUpdate = true; eGeo.computeBoundingSphere();
+  V.forEach((p, i) => dots[i].position.set(p[0], p[1], p[2]));
+
+  const deg = th * 180 / Math.PI, ico = TH_ICO * 180 / Math.PI;
+  const near = (x, y) => Math.abs(x - y) < 0.35;
+  const shape = near(deg, 0) ? 'Kuboktaeder' : near(deg, ico) ? 'Ikosaeder' : near(deg, 60) ? 'Oktaeder' : near(deg, 120) ? 'Oktaeder (umgestülpt)'
+    : near(deg, 180 - ico) ? 'Ikosaeder (umgestülpt)' : near(deg, 180) ? 'Kuboktaeder (umgestülpt)' : P.d < 0 ? 'Zwischenform, umgestülpt' : 'Zwischenform';
+  const set = (id, t) => document.getElementById(id).textContent = t;
+  set('o-shape', shape); set('o-th', deg.toFixed(2) + '°');
+  set('o-r', (Math.hypot(...V[0]) / A).toFixed(4) + ' a');
+  set('o-d', (P.d / A).toFixed(4) + ' a');
+  set('o-t', (deg > 65 && deg < 115 ? '≈ ' : '') + (volume(V) / (A**3 / (6 * Math.SQRT2))).toFixed(2));
+  document.getElementById('th').value = deg;
+}
+
+
+const $ = id => document.getElementById(id);
+let theta = 0, playing = false, dir = 1;
+$('th').addEventListener('input', e => { theta = e.target.value * Math.PI / 180; playing = false; sync(); });
+document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { theta = b.dataset.t === 'ico' ? TH_ICO : b.dataset.t * Math.PI / 180; playing = false; sync(); });
+$('play').onclick = () => { playing = !playing; sync(); };
+function sync() { $('play').classList.toggle('on', playing); $('play').textContent = playing ? '❚❚ Pause' : '▶ Animation'; }
+stage.onFrame = dt => {
+  if (playing) { theta += dir * dt * .5; if (theta >= Math.PI) { theta = Math.PI; dir = -1; } else if (theta <= 0) { theta = 0; dir = 1; } }
+  updateJit(theta);
+};
+window.__app = { pose, volume, TH_ICO, quads, tris, setTheta: d => { theta = d * Math.PI / 180; playing = false; } };
+</script>
+</body>
+</html>
