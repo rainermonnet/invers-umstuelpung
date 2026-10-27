@@ -3,244 +3,47 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Jitterbug 3D-Modell</title>
-<style>
-  :root { --bg:#0f1218; --panel:#171c26; --fg:#e8ecf3; --mut:#8c97aa; --acc:#ffb347; --line:#2a3242; }
-  @media (prefers-color-scheme: light) {
-    :root { --bg:#f3f5f9; --panel:#fff; --fg:#161a22; --mut:#5d6778; --acc:#d9730d; --line:#d5dbe6; }
-  }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui,sans-serif; }
-  .wrap { max-width:1100px; margin:0 auto; padding:16px; display:grid; gap:16px; grid-template-columns:1fr 320px; }
-  @media (max-width:820px) { .wrap { grid-template-columns:1fr; } }
-  h1 { font-size:20px; margin:0 0 4px; }
-  p.sub { margin:0 0 12px; color:var(--mut); }
-  canvas { width:100%; aspect-ratio:1; background:var(--panel); border:1px solid var(--line); border-radius:12px; touch-action:none; cursor:grab; display:block; }
-  .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; }
-  .panel h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:14px 0 6px; }
-  .panel h2:first-child { margin-top:0; }
-  input[type=range] { width:100%; accent-color:var(--acc); }
-  .btns { display:flex; flex-wrap:wrap; gap:6px; }
-  button { background:transparent; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:6px 10px; font:inherit; cursor:pointer; }
-  button:hover, button.on { border-color:var(--acc); color:var(--acc); }
-  table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
-  td { padding:3px 0; } td:last-child { text-align:right; }
-  .note { color:var(--mut); font-size:13px; }
-  .shape { font-weight:600; color:var(--acc); }
-</style>
+<title>Umstülpungen: Jitterbug und Oloid</title>
+<link rel="stylesheet" href="site.css">
 </head>
 <body>
-<div class="wrap">
-  <div>
-    <h1>Jitterbug-Transformation</h1>
-    <p class="sub">Kuboktaeder → Ikosaeder → Oktaeder · ziehen zum Drehen, Mausrad/Pinch zum Zoomen</p>
-    <canvas id="c" width="900" height="900"></canvas>
+<header class="site"><div><b>Umstülpungen</b>
+  <a href="index.html" aria-current="page">Start</a><a href="jitterbug.html">Jitterbug</a><a href="oloid.html">Oloid</a></div></header>
+<main>
+  <h1>Wenn sich ein Körper nach innen kehrt</h1>
+  <p class="lead">Zwei Bewegungen aus der Geometrie, in denen ein fester Körper kontinuierlich von innen nach außen gestülpt wird. Du kannst sie hier am Modell nachvollziehen, in 3D und im Browser.</p>
+  <div class="bar"></div>
+
+  <div class="cards">
+    <a class="card" href="jitterbug.html">
+      <div class="swatch" style="background:linear-gradient(90deg,#f6d02f,#ee6a1a,#d32f1f)"></div>
+      <h3>Jitterbug invers</h3>
+      <p>Das Kuboktaeder faltet sich zum Ikosaeder und zum Oktaeder, wandert durch sich selbst hindurch und taucht als umgestülptes Kuboktaeder wieder auf. Beschrieben von Buckminster Fuller.</p>
+      <span class="go">Zum Modell →</span>
+    </a>
+    <a class="card" href="oloid.html">
+      <div class="swatch" style="background:linear-gradient(90deg,#f6d02f,#ee8a1c,#d32f1f)"></div>
+      <h3>Das Oloid</h3>
+      <p>Die konvexe Hülle zweier senkrechter Kreise. Es entstand aus Paul Schatz’ Würfelumstülpung. Die Animation zeigt, wie ein Stab seine Fläche aufspannt.</p>
+      <span class="go">Zum Modell →</span>
+    </a>
   </div>
-  <div class="panel">
-    <h2>Twistwinkel θ</h2>
-    <input id="th" type="range" min="0" max="60" step="0.01" value="0">
-    <div class="btns" style="margin-top:8px">
-      <button id="play">▶ Animation</button>
-      <button data-t="0">Kuboktaeder</button>
-      <button data-t="ico">Ikosaeder</button>
-      <button data-t="60">Oktaeder</button>
+
+  <div class="text">
+    <h2>Worum es geht</h2>
+    <p>Man kann eine Socke umstülpen, einen Handschuh, einen Ballon. Bei einem <i>starren</i> Körper aus festen Flächen ist das ungewöhnlich. Trotzdem gibt es Konstruktionen aus starren Teilen und Gelenken, die sich <b>kontinuierlich</b> von innen nach außen kehren. Dabei laufen Ecken und Kanten auf klaren Bahnen, und manchmal entstehen daraus ganz neue Formen.</p>
+    <h2>Die beiden Beispiele</h2>
+    <ul>
+      <li><b>Jitterbug.</b> 8 starre Dreiecke tragen ein Kuboktaeder. Dreht man sie um ihre Achsen, verwandelt es sich in ein Ikosaeder und dann in ein Oktaeder. Danach wandern die Dreiecke durch das Zentrum, und die Form kehrt sich um. Das Modell zeigt den ganzen Weg von 0° bis 180°.</li>
+      <li><b>Oloid.</b> Paul Schatz entdeckte 1929 an seiner Würfelumstülpung, dass die Raumdiagonalen eine Regelfläche überstreichen. Sie umschließt einen Körper, das Oloid. Er ist die konvexe Hülle zweier Kreise und rollt auf seiner ganzen Oberfläche ab.</li>
+    </ul>
+    <div class="box">
+      <p>Das Oloid ist <b>nicht</b> aus dem Kuboktaeder entwickelt. Jitterbug und Würfelumstülpung sind zwei getrennte Bewegungen. Verbunden sind sie nur durch den Gedanken der Umstülpung. Die Details stehen auf der <a href="oloid.html">Oloid-Seite</a>.</p>
     </div>
-    <h2>Anzeige</h2>
-    <div class="btns">
-      <button id="fills" class="on">Flächen</button>
-      <button id="axes">Drehachsen</button>
-    </div>
-    <h2>Live-Werte</h2>
-    <table>
-      <tr><td>Form</td><td class="shape" id="o-shape"></td></tr>
-      <tr><td>θ</td><td id="o-th"></td></tr>
-      <tr><td>Umkugelradius R</td><td id="o-r"></td></tr>
-      <tr><td>Dreieckskante a</td><td id="o-a"></td></tr>
-      <tr><td>Rhombus-Diagonale</td><td id="o-d"></td></tr>
-      <tr><td>Volumen V/a³</td><td id="o-v"></td></tr>
-      <tr><td>Volumen (Tetraeder-Einheiten)</td><td id="o-t"></td></tr>
-    </table>
-    <h2>Modell</h2>
-    <p class="note">8 starre, gleichseitige Dreiecke (orange/blau) liegen auf den vier Raumdiagonalen. Jedes dreht sich um seine Achse und wandert dabei radial; die 6 Quadrate des Kuboktaeders werden zu Rhomben, die sich beim Oktaeder zu Strecken falten. Benachbarte Dreiecke drehen gegenläufig.</p>
+    <h2>Die Farben</h2>
+    <p>Die Farben folgen Goethes Farbenlehre, dem warmen Teil seiner Reihe: Gelb für das Licht, Orange als Steigerung und Rot als deren Höhepunkt. Im Jitterbug dunkeln die Dreiecke beim Umstülpen nach. Beim Oloid läuft die Fläche von Gelb auf Kreis 1 über Orange zu Rot auf Kreis 2.</p>
   </div>
-</div>
-<script>
-'use strict';
-const S3 = Math.sqrt(3), A = Math.SQRT2;           // Kantenlänge a = √2 (Kuboktaeder mit Ecken (±1,±1,0)…)
-const TH_MAX = Math.PI / 3;
-
-const cross = (u, v) => [u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
-const dot = (u, v) => u[0]*v[0]+u[1]*v[1]+u[2]*v[2];
-const sub = (u, v) => [u[0]-v[0], u[1]-v[1], u[2]-v[2]];
-const len = u => Math.hypot(u[0], u[1], u[2]);
-function rodrigues(v, n, a) {
-  const c = Math.cos(a), s = Math.sin(a), k = dot(n, v) * (1 - c), x = cross(n, v);
-  return [v[0]*c + x[0]*s + n[0]*k, v[1]*c + x[1]*s + n[1]*k, v[2]*c + x[2]*s + n[2]*k];
-}
-
-// Dreieck s=(sx,sy,sz): Ecken im Kuboktaeder-Zustand
-const signs = [];
-for (const sx of [1,-1]) for (const sy of [1,-1]) for (const sz of [1,-1]) signs.push([sx, sy, sz]);
-const tris = signs.map(s => ({
-  s, p: s[0]*s[1]*s[2], n: s.map(x => x / S3),
-  off: [[s[0],s[1],0],[s[0],0,s[2]],[0,s[1],s[2]]].map(v => v.map((x, i) => x - 2/3*s[i]))
-}));
-
-// Zustand bei Twistwinkel th: Abstand d des Dreieckszentrums folgt aus der Bedingung,
-// dass die Ecke (1,1,0) von Dreieck (1,1,1) und (1,1,-1) in der Ebene z=0 zusammenfällt.
-function pose(th) {
-  const t0 = tris[0], r = rodrigues(t0.off[0], t0.n, th);
-  const d = -r[2] / t0.n[2];
-  const pts = tris.map(t => t.off.map(o => {
-    const q = rodrigues(o, t.n, t.p * th);
-    return [q[0] + d*t.n[0], q[1] + d*t.n[1], q[2] + d*t.n[2]];
-  }));
-  return { d, pts };
-}
-
-// Die 12 Ecken: Dreieck i, Ecke k  ->  Ecken-Index (über Kuboktaeder-Koordinaten)
-const vkey = (s, k) => { const v = [[s[0],s[1],0],[s[0],0,s[2]],[0,s[1],s[2]]][k]; return v.join(','); };
-const vids = {}; const vlist = [];
-tris.forEach((t, i) => t.off.forEach((_, k) => { const key = vkey(t.s, k); if (!(key in vids)) { vids[key] = vlist.length; vlist.push([i, k]); } t.off[k].id = vids[key]; }));
-tris.forEach(t => t.ids = [0,1,2].map(k => vids[vkey(t.s, k)]));
-
-// 6 Quadrate: je Achse j und Vorzeichen sg, die 4 Ecken zyklisch geordnet
-const quads = [];
-for (let j = 0; j < 3; j++) for (const sg of [1,-1]) {
-  const ids = vlist.map((_, i) => i).filter(i => { const [ti, k] = vlist[i]; const c = [[tris[ti].s[0],tris[ti].s[1],0],[tris[ti].s[0],0,tris[ti].s[2]],[0,tris[ti].s[1],tris[ti].s[2]]][k]; return c[j] === sg; });
-  const u = (j+1)%3, w = (j+2)%3;
-  const co = i => { const [ti, k] = vlist[i]; return [[tris[ti].s[0],tris[ti].s[1],0],[tris[ti].s[0],0,tris[ti].s[2]],[0,tris[ti].s[1],tris[ti].s[2]]][k]; };
-  ids.sort((a, b) => Math.atan2(co(a)[w], co(a)[u]) - Math.atan2(co(b)[w], co(b)[u]));
-  quads.push(ids);
-}
-
-function vertices(P) { return vlist.map(([ti, k]) => P.pts[ti][k]); }
-
-// Windschiefes Quadrat entlang der kürzeren Diagonale in zwei Dreiecke teilen
-function splitQuad(q, V) {
-  const short02 = len(sub(V[q[0]], V[q[2]])) <= len(sub(V[q[1]], V[q[3]]));
-  return short02 ? [[q[0], q[1], q[2]], [q[0], q[2], q[3]]] : [[q[1], q[2], q[3]], [q[1], q[3], q[0]]];
-}
-
-function volume(V) {
-  const faces = tris.map(t => t.ids);
-  quads.forEach(q => faces.push(...splitQuad(q, V)));
-  let vol = 0;
-  for (const f of faces) {
-    const [a, b, c] = f.map(i => V[i]);
-    const triple = dot(a, cross(b, c)) / 6;
-    const nrm = cross(sub(b, a), sub(c, a)), cen = [(a[0]+b[0]+c[0])/3, (a[1]+b[1]+c[1])/3, (a[2]+b[2]+c[2])/3];
-    vol += dot(nrm, cen) >= 0 ? triple : -triple;
-  }
-  return vol;
-}
-
-// θ, bei dem alle Kanten des Polyeders gleich lang sind (Ikosaeder): kurze Rhombus-Diagonale = a
-function icoTheta() {
-  const f = th => { const V = vertices(pose(th)); const q = quads[0]; return Math.min(len(sub(V[q[0]], V[q[2]])), len(sub(V[q[1]], V[q[3]]))) - A; };
-  let lo = 0, hi = TH_MAX;
-  for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; (f(m) > 0 ? lo = m : hi = m); }
-  return (lo + hi) / 2;
-}
-const TH_ICO = icoTheta();
-
-// ---------- Rendering ----------
-const cv = document.getElementById('c'), ctx = cv.getContext('2d');
-let yaw = 0.7, pitch = 0.45, zoom = 1, theta = 0, playing = false, showFill = true, showAxes = false;
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-
-function proj(p) {
-  const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
-  const x = p[0]*cy - p[1]*sy, y0 = p[0]*sy + p[1]*cy;
-  const y = y0*cp - p[2]*sp, z = y0*sp + p[2]*cp;       // z: Tiefe (größer = weiter hinten)
-  const k = cv.width * 0.2 * zoom;
-  return [cv.width/2 + x*k, cv.height/2 - y*k, z];
-}
-
-function draw() {
-  const P = pose(theta), V = vertices(P);
-  const W = cv.width; ctx.clearRect(0, 0, W, W);
-  const dark = !matchMedia('(prefers-color-scheme: light)').matches;
-  const orange = dark ? [255,179,71] : [230,120,20], blue = dark ? [90,160,255] : [30,100,220], grey = dark ? [150,170,190] : [90,110,130];
-  const edgeCol = dark ? 'rgba(255,255,255,.85)' : 'rgba(20,25,35,.85)';
-
-  const faces = [];
-  tris.forEach((t, i) => faces.push({ pts: P.pts[i], col: t.p > 0 ? orange : blue, a: .78 }));
-  quads.forEach(q => splitQuad(q, V).forEach(f => faces.push({ pts: f.map(i => V[i]), col: grey, a: .38 })));
-  faces.forEach(f => { f.pp = f.pts.map(proj); f.z = f.pp.reduce((s, p) => s + p[2], 0) / f.pp.length; });
-  faces.sort((a, b) => b.z - a.z);
-
-  ctx.lineJoin = 'round';
-  if (showAxes) {
-    ctx.strokeStyle = css('--mut'); ctx.setLineDash([6, 6]); ctx.lineWidth = 1;
-    for (const s of signs.filter(s => s[0] > 0)) {
-      const a = proj(s.map(x => x * 1.9 / S3 * 1)), b = proj(s.map(x => -x * 1.9 / S3 * 1));
-      ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
-    }
-    ctx.setLineDash([]);
-  }
-  for (const f of faces) {
-    ctx.beginPath(); f.pp.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath();
-    if (showFill) { ctx.fillStyle = `rgba(${f.col[0]},${f.col[1]},${f.col[2]},${f.a})`; ctx.fill(); }
-    ctx.strokeStyle = edgeCol; ctx.lineWidth = 2; ctx.stroke();
-  }
-  ctx.fillStyle = edgeCol;
-  for (const v of V.map(proj)) { ctx.beginPath(); ctx.arc(v[0], v[1], 4, 0, 6.3); ctx.fill(); }
-
-  // Werte
-  const deg = theta * 180 / Math.PI;
-  const q = quads[0], d1 = len(sub(V[q[0]], V[q[2]])), d2 = len(sub(V[q[1]], V[q[3]]));
-  const vol = volume(V), vt = vol / (A**3 / (6 * Math.SQRT2));
-  const near = (x, y) => Math.abs(x - y) < 0.35;
-  const shape = near(deg, 0) ? 'Kuboktaeder' : near(deg, TH_ICO * 180 / Math.PI) ? 'Ikosaeder' : near(deg, 60) ? 'Oktaeder' : 'Zwischenform';
-  const set = (id, t) => document.getElementById(id).textContent = t;
-  set('o-shape', shape); set('o-th', deg.toFixed(2) + '°');
-  set('o-r', (len(V[0]) / A).toFixed(4) + ' a'); set('o-a', '1 (starr)');
-  set('o-d', (Math.max(d1, d2) / A).toFixed(3) + ' a / ' + (Math.min(d1, d2) / A).toFixed(3) + ' a');
-  set('o-v', (vol / A**3).toFixed(4)); set('o-t', vt.toFixed(2));
-  document.getElementById('th').value = deg;
-}
-
-// ---------- Interaktion ----------
-let last = null, pinch = null;
-const pointers = new Map();
-cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); pointers.set(e.pointerId, e); cv.style.cursor = 'grabbing'; });
-cv.addEventListener('pointerup', e => { pointers.delete(e.pointerId); pinch = null; cv.style.cursor = 'grab'; });
-cv.addEventListener('pointermove', e => {
-  const prev = pointers.get(e.pointerId); if (!prev) return;
-  if (pointers.size === 2) {
-    const [a, b] = [...pointers.values()]; pointers.set(e.pointerId, e);
-    const [c, d] = [...pointers.values()];
-    const k = Math.hypot(c.clientX - d.clientX, c.clientY - d.clientY) / Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-    if (isFinite(k) && k > 0) zoom = Math.min(3, Math.max(.4, zoom * k));
-  } else {
-    yaw += (e.clientX - prev.clientX) * 0.008; pitch = Math.max(-1.5, Math.min(1.5, pitch + (e.clientY - prev.clientY) * 0.008));
-    pointers.set(e.pointerId, e);
-  }
-  if (!playing) draw();
-});
-cv.addEventListener('wheel', e => { e.preventDefault(); zoom = Math.min(3, Math.max(.4, zoom * Math.exp(-e.deltaY * 0.001))); if (!playing) draw(); }, { passive: false });
-document.getElementById('th').addEventListener('input', e => { theta = e.target.value * Math.PI / 180; playing = false; sync(); draw(); });
-document.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => {
-  theta = b.dataset.t === 'ico' ? TH_ICO : b.dataset.t * Math.PI / 180; playing = false; sync(); draw();
-}));
-document.getElementById('play').addEventListener('click', () => { playing = !playing; sync(); });
-document.getElementById('fills').addEventListener('click', e => { showFill = !showFill; e.target.classList.toggle('on', showFill); draw(); });
-document.getElementById('axes').addEventListener('click', e => { showAxes = !showAxes; e.target.classList.toggle('on', showAxes); draw(); });
-function sync() { const b = document.getElementById('play'); b.classList.toggle('on', playing); b.textContent = playing ? '❚❚ Pause' : '▶ Animation'; }
-
-let dir = 1, t0 = 0;
-function loop(t) {
-  const dt = Math.min(0.05, (t - t0) / 1000); t0 = t;
-  if (playing) {
-    theta += dir * dt * 0.45;
-    if (theta >= TH_MAX) { theta = TH_MAX; dir = -1; } else if (theta <= 0) { theta = 0; dir = 1; }
-    draw();
-  }
-  requestAnimationFrame(loop);
-}
-draw(); requestAnimationFrame(loop);
-window.__jitterbug = { pose, vertices, volume, TH_ICO, quads, tris };
-</script>
+</main>
+<footer>Modelle mit three.js (WebGL). Ziehen zum Drehen, Mausrad oder Pinch zum Zoomen.</footer>
 </body>
 </html>
