@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Jitterbug invers WebGL</title>
 <style>
-  :root { --bg:#0f1218; --panel:#171c26; --fg:#e8ecf3; --mut:#8c97aa; --acc:#ffb347; --line:#2a3242; }
+  :root { --bg:#0f1218; --panel:#171c26; --fg:#e8ecf3; --mut:#8c97aa; --acc:#f2b632; --line:#2a3242; }
   @media (prefers-color-scheme: light) {
-    :root { --bg:#f3f5f9; --panel:#fff; --fg:#161a22; --mut:#5d6778; --acc:#d9730d; --line:#d5dbe6; }
+    :root { --bg:#f3f5f9; --panel:#fff; --fg:#161a22; --mut:#5d6778; --acc:#c9650f; --line:#d5dbe6; }
   }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui,sans-serif; }
@@ -15,7 +15,7 @@
   @media (max-width:820px) { .wrap { grid-template-columns:1fr; } }
   h1 { font-size:20px; margin:0 0 4px; }
   p.sub { margin:0 0 12px; color:var(--mut); }
-  #stage { width:100%; aspect-ratio:1; background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; touch-action:none; cursor:grab; }
+  #stage { width:100%; aspect-ratio:1; background:#26251f; border:1px solid var(--line); border-radius:12px; overflow:hidden; touch-action:none; cursor:grab; }
   #stage canvas { width:100%; height:100%; display:block; }
   .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; }
   .panel h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:14px 0 6px; }
@@ -161,7 +161,10 @@ function icoTheta() {
 }
 const TH_ICO = icoTheta();
 
-const ORANGE = [1, .70, .28], BLUE = [.35, .63, 1], GREY = [.6, .68, .76];
+// Goethes Farbenlehre: Polarität Gelb (Licht, Plus) und Blau (Finsternis, Minus), Steigerung ins Rote bzw. Violette, Grün als Mischung der Pole.
+const hex = h => [(h >> 16 & 255) / 255, (h >> 8 & 255) / 255, (h & 255) / 255];
+const PLUS = [0xf6d02f, 0xe8731a, 0xb3225f].map(hex), MINUS = [0x2f5fb8, 0x5b3a9e, 0x34206b].map(hex), GRUEN = hex(0x3f9d72);
+const ramp = (st, x) => { const f = Math.min(1, Math.max(0, x)) * (st.length - 1), i = Math.min(st.length - 2, Math.floor(f)), t = f - i; return st[i].map((v, j) => v + (st[i+1][j] - v) * t); };
 const NF = 8 + 12;                       // 8 Dreiecke + 6 Quadrate à 2 Dreiecke
 const pos = new Float32Array(NF * 9), nor = new Float32Array(NF * 9), col = new Float32Array(NF * 9);
 const geo = new THREE.BufferGeometry();
@@ -171,15 +174,16 @@ geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
 const jitMesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: .55, metalness: .05, transparent: true, opacity: .88 }));
 const edgePos = new Float32Array(24 * 6);
 const eGeo = new THREE.BufferGeometry(); eGeo.setAttribute('position', new THREE.BufferAttribute(edgePos, 3));
-const edges = new THREE.LineSegments(eGeo, new THREE.LineBasicMaterial({ color: 0x222831 }));
-const dots = vlist.map(() => { const m = new THREE.Mesh(new THREE.SphereGeometry(.045, 12, 8), new THREE.MeshBasicMaterial({ color: 0x222831 })); return m; });
+const edges = new THREE.LineSegments(eGeo, new THREE.LineBasicMaterial({ color: 0xf1ead6 }));
+const dots = vlist.map(() => { const m = new THREE.Mesh(new THREE.SphereGeometry(.045, 12, 8), new THREE.MeshBasicMaterial({ color: 0xf1ead6 })); return m; });
 const jit = new THREE.Group(); jit.add(jitMesh, edges, ...dots); rig.add(jit);
 
 function updateJit(th) {
   const P = pose(th), V = P.V;
   const faces = [];
-  tris.forEach(t => faces.push([t.wind, t.p > 0 ? ORANGE : BLUE]));
-  quads.forEach(q => quadTris(q, V).forEach(f => faces.push([f, GREY])));
+  const gr = (1 - P.d / (2 / S3)) / 2;   // 0 = Ausgangsform, 1 = voll umgestülpt
+  tris.forEach(t => faces.push([t.wind, ramp(t.p > 0 ? PLUS : MINUS, gr)]));
+  quads.forEach(q => quadTris(q, V).forEach(f => faces.push([f, GRUEN])));
   faces.forEach(([f, c], i) => {
     const [a, b, d] = f.map(k => V[k]), n = cross(sub(b, a), sub(d, a)), l = Math.hypot(...n) || 1;
     [a, b, d].forEach((p, j) => { const o = i * 9 + j * 3; pos.set(p, o); nor.set([n[0]/l, n[1]/l, n[2]/l], o); col.set(c, o); });
@@ -206,7 +210,7 @@ function updateJit(th) {
 // ---------- Oloid ----------
 // Konvexe Hülle zweier Kreise (r=1): Kreis 1 in der xy-Ebene um (-1/2,0,0), Kreis 2 in der xz-Ebene um (1/2,0,0).
 const oloid = new THREE.Group(); rig.add(oloid); oloid.visible = false;
-const C1 = new THREE.Color(0xffb347), C2 = new THREE.Color(0xffffff);
+const C1 = new THREE.Color(0xf6d02f), C2 = new THREE.Color(0x2f5fb8);   // Gelb und Blau, die Pole
 
 // k Punkte je Kreis -> Hülle (Dreiecke) und Verbindungsstrecken zwischen den Kreisen
 function hullOf(k) {
@@ -233,17 +237,20 @@ full.rul.sort((a, b) => full.pts[a[0]].t - full.pts[b[0]].t || full.pts[a[1]].t 
 
 function surfaceGeo(h) {
   const v = []; h.tri.forEach(f => f.forEach(i => v.push(...h.pts[i].p)));
-  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3)); g.computeVertexNormals(); return g;
+  const c = []; h.tri.forEach(f => f.forEach(i => c.push(...(h.pts[i].c ? C2 : C1).toArray())));
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(c, 3)); g.computeVertexNormals(); return g;
 }
-const surfMat = new THREE.MeshStandardMaterial({ color: 0x5fa8ff, roughness: .35, metalness: .1, side: THREE.DoubleSide, transparent: true, opacity: 1 });
+const surfMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .4, metalness: .1, side: THREE.DoubleSide, transparent: true, opacity: 1 });
 const surf = new THREE.Mesh(surfaceGeo(full), surfMat);
-const wire = new THREE.Mesh(surf.geometry, new THREE.MeshBasicMaterial({ color: 0x0a1020, wireframe: true, transparent: true, opacity: .25 })); wire.visible = false;
+const wire = new THREE.Mesh(surf.geometry, new THREE.MeshBasicMaterial({ color: 0xf1ead6, wireframe: true, transparent: true, opacity: .22 })); wire.visible = false;
 const circPts = (cx, pl) => { const a = []; for (let i = 0; i <= 128; i++) { const t = i / 128 * 2 * Math.PI; a.push(new THREE.Vector3(cx + Math.cos(t), pl ? 0 : Math.sin(t), pl ? Math.sin(t) : 0)); } return a; };
 const circ1 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(circPts(-.5, 0)), new THREE.LineBasicMaterial({ color: C1 }));
 const circ2 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(circPts(.5, 1)), new THREE.LineBasicMaterial({ color: C2 }));
 const rv = []; full.rul.forEach(([u, v]) => rv.push(...full.pts[u].p, ...full.pts[v].p));
 const rulGeo = new THREE.BufferGeometry(); rulGeo.setAttribute('position', new THREE.Float32BufferAttribute(rv, 3));
-const rulMat = new THREE.LineBasicMaterial({ color: 0x9fd0ff, transparent: true, opacity: .9 });
+const rc = []; full.rul.forEach(() => rc.push(...C1.toArray(), ...C2.toArray()));
+rulGeo.setAttribute('color', new THREE.Float32BufferAttribute(rc, 3));
+const rulMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: .9 });
 const rulings = new THREE.LineSegments(rulGeo, rulMat);
 const mk = (x, c) => { const m = new THREE.Mesh(new THREE.SphereGeometry(.05, 16, 12), new THREE.MeshBasicMaterial({ color: c })); m.position.set(x, 0, 0); return m; };
 const centers = new THREE.Group(); centers.add(mk(-.5, C1), mk(.5, C2));
@@ -254,7 +261,7 @@ document.getElementById('ol-a').textContent = (4 * Math.PI).toFixed(4);
 document.getElementById('ol-v').textContent = '3.0524';
 
 // Entstehung: u in [0,1] -> vier Schritte
-const STEPS = ['1 · Kreis 1 (orange) zeichnen', '2 · Kreis 2 senkrecht dazu, durch den Mittelpunkt von Kreis 1', '3 · Gleiche Winkel verbinden: Strecken zwischen den Kreisen', '4 · Strecken spannen die glatte Fläche auf: das Oloid'];
+const STEPS = ['1 · Kreis 1 (gelb) zeichnen', '2 · Kreis 2 (blau) senkrecht dazu, durch den Mittelpunkt von Kreis 1', '3 · Gleiche Winkel verbinden: Strecken zwischen den Kreisen', '4 · Strecken spannen die glatte Fläche auf: das Oloid'];
 const SEG = [0, .2, .4, .75, 1];
 const ease = x => x * x * (3 - 2 * x), seg = (u, i) => Math.min(1, Math.max(0, (u - SEG[i]) / (SEG[i+1] - SEG[i])));
 function updateBuild(u) {
