@@ -1,5 +1,9 @@
 # Wer hat die Soziale Dreigliederung angestoßen? Die Namen unter dem Aufruf von 1919
 
+*Unternehmer, Pfarrer, Dichter, Gelehrte: Wer unterschrieb vor über hundert Jahren den Aufruf zur Sozialen Dreigliederung, und was wissen wir über sie?*
+
+![Stilisierte Profile in drei sich überschneidenden Kreisen für Geistesleben, Rechtsleben und Wirtschaftsleben. Es sind Phantasiefiguren und keine Abbildungen der genannten Personen.](dreigliederung-portraits.png)
+
 Im März 1919 erschien in deutschen Tageszeitungen ein Aufruf mit dem Titel **„An das deutsche Volk und an die Kulturwelt!“**. Verfasst hatte ihn [Rudolf Steiner](https://de.wikipedia.org/wiki/Rudolf_Joseph_Lorenz_Steiner), und er forderte nach dem Ersten Weltkrieg eine Neugestaltung des sozialen Lebens: Geistesleben, Rechtsleben und Wirtschaftsleben sollen sich eigenständig entfalten und zugleich zusammenwirken. Das ist der Kern der Sozialen Dreigliederung.
 
 Unter dem Aufruf standen rund dreihundert Namen aus Deutschland, Österreich und der Schweiz: Unternehmer, Gelehrte, Pfarrer, Künstler, Schriftsteller. Die vollständige Anzeige können Sie [beim Institut für soziale Dreigliederung](https://www.dreigliederung.de/essays/1919-02-rudolf-steiner-aufruf-an-das-deutsche-volk-und-an-die-kulturwelt) nachlesen. Hier stellen wir eine Auswahl derer vor, die in der Anfangszeit sichtbar waren, und verlinken zu jeder Person, wo man im Netz mehr über sie findet.
