@@ -2,7 +2,7 @@
 
 *Unternehmer, Pfarrer, Dichter, Gelehrte: Wer unterschrieb vor über hundert Jahren den Aufruf zur Sozialen Dreigliederung, und was wissen wir über sie?*
 
-![Sieben Linienportraits stehen hintereinander und voreinander und sehen den Betrachter an. Drei farbige Linien für Geistesleben, Rechtsleben und Wirtschaftsleben verbinden sie. Es sind Phantasiefiguren und keine Abbildungen der genannten Personen.](dreigliederung-portraits.png)
+![Sieben Gesichter als Linienzeichnung stehen hintereinander und voreinander und sehen den Betrachter an. Drei farbige Linien für Geistesleben, Rechtsleben und Wirtschaftsleben verbinden sie. Es sind Phantasiefiguren und keine Abbildungen der genannten Personen.](dreigliederung-portraits.png)
 
 Im März 1919 erschien in deutschen Tageszeitungen ein Aufruf mit dem Titel **„An das deutsche Volk und an die Kulturwelt!“**. Verfasst hatte ihn [Rudolf Steiner](https://de.wikipedia.org/wiki/Rudolf_Joseph_Lorenz_Steiner), und er forderte nach dem Ersten Weltkrieg eine Neugestaltung des sozialen Lebens: Geistesleben, Rechtsleben und Wirtschaftsleben sollen sich eigenständig entfalten und zugleich zusammenwirken. Das ist der Kern der Sozialen Dreigliederung.
 
