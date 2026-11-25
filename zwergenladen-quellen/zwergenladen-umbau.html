@@ -1,0 +1,509 @@
+<title>Zwergenladen Umbau</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: ockergelbe Fassaden-Kopfzeile, darunter eine Werkstattmappe: Draufsicht, Wandabwicklungen, Insel, Bauteile – alles maßstäblich */
+:root{
+  --paper:#FFFCF6; --ink:#2A2118; --muted:#6E6050; --line:#DED0B8;
+  --ochre:#E3A12F; --ochre-soft:#F8E6BF; --on-ochre:#2A1C0C;
+  --red:#B3352B; --moss:#56703F; --moss-soft:#DCE5CF; --pine:#E6C690; --pine-dark:#B4864A;
+  --floor:#FBF3E3; --lager:#EEE3CF; --card:#FFFFFF; --wallbg:#FFF8EC;
+  --f-display:"Young Serif", Georgia, "Times New Roman", serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#17130E; --ink:#F2E8D7; --muted:#B9A88F; --line:#3E3428;
+  --ochre:#E9A73A; --ochre-soft:#3A2C14; --on-ochre:#22170A;
+  --red:#E3685D; --moss:#8FB06C; --moss-soft:#2A3320; --pine:#7E613A; --pine-dark:#D2A465;
+  --floor:#211B14; --lager:#2D2419; --card:#1E1812; --wallbg:#1B1610; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#17130E; --ink:#F2E8D7; --muted:#B9A88F; --line:#3E3428;
+  --ochre:#E9A73A; --ochre-soft:#3A2C14; --on-ochre:#22170A;
+  --red:#E3685D; --moss:#8FB06C; --moss-soft:#2A3320; --pine:#7E613A; --pine-dark:#D2A465;
+  --floor:#211B14; --lager:#2D2419; --card:#1E1812; --wallbg:#1B1610; color-scheme:dark}
+
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;line-height:1.15;margin:0}
+h2{font-size:clamp(1.6rem,3.4vw,2.2rem)}
+h3{font-size:1.25rem}
+p{margin:0;max-width:68ch}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+header.band{background:var(--ochre);color:var(--on-ochre)}
+header.band .wrap{padding-block:40px 34px;display:grid;gap:18px}
+header.band .eyebrow{color:var(--on-ochre);opacity:.75}
+header.band h1{font-size:clamp(2.4rem,7vw,4.4rem)}
+header.band p{font-size:1.08rem;max-width:62ch}
+.facts{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:6px}
+.facts div{display:grid}
+.facts b{font-family:var(--f-display);font-weight:400;font-size:1.9rem;line-height:1;font-variant-numeric:tabular-nums}
+.facts span{font-size:.82rem}
+
+section{padding-block:44px;border-bottom:1px solid var(--line);display:grid;gap:22px}
+section:last-of-type{border-bottom:0}
+.lead{font-size:1.07rem}
+.note{font-size:.88rem;color:var(--muted)}
+
+.layers{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.layers div{padding:16px 18px;border-radius:6px;display:grid;gap:4px;align-content:start}
+.layers .krone{background:var(--moss-soft)}
+.layers .stamm{background:var(--ochre-soft)}
+.layers .wurzel{background:var(--lager)}
+.layers .himmel{background:var(--card);border:1px solid var(--line)}
+.layers b{font-family:var(--f-display);font-weight:400;font-size:1.2rem}
+.layers .h{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);letter-spacing:.06em}
+.layers p{font-size:.93rem}
+
+.fig{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px;min-width:0;margin:0;display:grid;gap:10px}
+.fig figcaption{font-size:.86rem;color:var(--muted)}
+.scroll{overflow-x:auto}
+.scroll svg{display:block}
+.fig svg{width:100%;height:auto;display:block}
+
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+.two.wide{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
+@media (max-width:840px){.two,.two.wide{grid-template-columns:1fr}}
+.list{display:grid;gap:14px}
+.list div{display:grid;gap:3px}
+.list b{font-size:1rem}
+.list p{font-size:.94rem;color:var(--muted)}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85rem;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:10px;vertical-align:middle;margin-right:6px;border-radius:2px}
+
+.walls{display:grid;gap:18px}
+
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.92rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tbody.num td{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.85rem}
+ol.steps{margin:0;padding-left:1.3em;display:grid;gap:10px;max-width:72ch}
+ol.steps li::marker{font-family:var(--f-mono);color:var(--ochre)}
+.ask{background:var(--ochre-soft);border-radius:6px;padding:20px 22px;display:grid;gap:10px}
+.ask ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
+footer{padding-block:30px 50px;color:var(--muted);font-size:.85rem}
+
+/* SVG */
+svg text{font-family:var(--f-mono);font-size:10px;fill:var(--ink)}
+svg text.m{fill:var(--muted)}
+svg text.w{fill:var(--paper)}
+svg text.big{font-size:12px}
+svg text.halo{paint-order:stroke;stroke:var(--wallbg);stroke-width:5px;stroke-linejoin:round}
+svg .floor{fill:var(--floor)}
+svg .gang{fill:var(--lager)}
+svg .wallbg{fill:var(--wallbg)}
+svg .wall{stroke:var(--ink);stroke-width:5;stroke-linecap:square;fill:none}
+svg .thin{stroke:var(--ink);stroke-width:1.5;fill:none}
+svg .win{stroke:var(--ochre);stroke-width:5;fill:none}
+svg .swing{stroke:var(--muted);stroke-width:1;fill:none;stroke-dasharray:3 3}
+svg .shelf{fill:var(--pine);stroke:var(--pine-dark);stroke-width:1}
+svg .roll{stroke:var(--red);stroke-width:1.3;fill:none;stroke-dasharray:6 3}
+svg .island{fill:var(--moss)}
+svg .podium{fill:var(--ochre-soft);stroke:var(--ochre);stroke-width:1}
+svg .curtain{stroke:var(--red);stroke-width:2.2;fill:none}
+svg .walk{stroke:var(--moss);stroke-width:1.6;fill:none;stroke-dasharray:2 4;stroke-linecap:round}
+svg .ladder{stroke:var(--ochre);stroke-width:1.6;fill:none;stroke-dasharray:5 3}
+svg .cash{fill:var(--ink)}
+svg .dim{stroke:var(--muted);stroke-width:1;fill:none}
+svg .post{fill:var(--pine-dark)}
+svg .board{fill:var(--pine);stroke:var(--pine-dark);stroke-width:.8}
+svg .box{fill:var(--ochre);stroke:var(--pine-dark);stroke-width:1}
+svg .hole{fill:var(--wallbg)}
+svg .wheel{fill:var(--ink)}
+svg .mtn{fill:var(--ochre-soft);stroke:var(--ochre);stroke-width:1}
+svg .tree{fill:var(--moss)}
+svg .roof{fill:var(--red)}
+svg .glow{fill:var(--ochre)}
+svg .led{stroke:var(--ochre);stroke-width:3;stroke-linecap:round}
+svg .goods1{fill:var(--red);opacity:.55}
+svg .goods2{fill:var(--moss);opacity:.6}
+svg .goods3{fill:var(--pine-dark);opacity:.7}
+svg .goods4{fill:var(--ochre);opacity:.75}
+svg .crate{fill:var(--lager);stroke:var(--pine-dark);stroke-width:1}
+svg .rope{stroke:var(--muted);stroke-width:1}
+svg .spoke{stroke:var(--red);stroke-width:2}
+svg .rim{fill:none;stroke:var(--red);stroke-width:4}
+svg .step{fill:var(--ochre-soft);stroke:var(--pine-dark);stroke-width:1}
+</style>
+
+<header class="band">
+  <div class="wrap">
+    <div class="eyebrow">Zwergenladen · zwergenladen.info · Umbaukonzept, Fassung 2</div>
+    <h1>Der Zwergenwald auf 16&nbsp;m²</h1>
+    <p>Neuer Grundriss mit rollbarer Insel, die Regale als Wald mit Wurzeln, Stämmen und Krone, jede Wand von vorne gezeichnet und der Raum von oben. Alles mit IVAR, Sperrholz und Rollen, also bezahlbar und zum großen Teil selbst gebaut.</p>
+    <div class="facts">
+      <div><b>4 × 4 m</b><span>Laden</span></div>
+      <div><b>2,20 m</b><span>Deckenhöhe</span></div>
+      <div><b>~1.550</b><span>Artikel im Laden</span></div>
+      <div><b>10</b><span>Regalfelder IVAR</span></div>
+      <div><b>~800–1.400 €</b><span>Material, geschätzt</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section>
+  <div class="eyebrow">Leitidee</div>
+  <h2>Ein Wald, durch den man geht</h2>
+  <p class="lead">Euer Sortiment ist ein Wald: Ostheimer-Tiere, Grimm's-Regenbögen, Käthe-Kruse- und Nanchen-Puppen, Stockmar-Wachs, Kraul und Mercurius, Jahreszeitenpüppchen und Fenstersterne. Statt ihn in Regale zu stopfen, wird der Laden selbst zum Wald. Jede Höhe hat eine Rolle, und das Bild gibt der Fülle eine Ordnung, die Kinder sofort verstehen.</p>
+  <div class="layers">
+    <div class="krone"><span class="h">KRONE · 160–220 CM</span><b>Waldsaum</b><p>Eine ausgesägte Blende aus zwei Lagen Sperrholz läuft über alle Regale: hinten Berge in Ocker, vorne Tannen in Moos, irgendwo ein Zwergenhaus mit Licht. Dahinter verschwindet der Vorrat.</p></div>
+    <div class="stamm"><span class="h">STÄMME · 35–160 CM</span><b>Die Welten</b><p>Die IVAR-Felder bleiben, aber jede Wand bekommt eine Welt: Puppenstube, Ostheimer-Weide, Malstube &amp; Bücher. Wegweiser aus Holz zeigen den Weg.</p></div>
+    <div class="wurzel"><span class="h">WURZELN · 0–32 CM</span><b>Stollenkisten</b><p>Unter jedem Regalfeld rollt eine Kiste mit Rundbogen-Griff wie ein Stolleneingang. Lager für euch, Schatzkiste für Kinder.</p></div>
+    <div class="himmel"><span class="h">HIMMEL · ÜBER DER INSEL</span><b>Die Hängeleiter</b><p>Über der Insel hängt eine alte Holzleiter waagerecht unter der Decke. Daran hängen Mobiles, Fenstersterne und Laternen, also genau dort, wo niemand mit dem Kopf anstößt.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Von oben</div>
+  <h2>Grundriss mit Insel</h2>
+  <div class="two wide">
+    <figure class="fig">
+      <div id="plan"></div>
+      <figcaption>Draufsicht, Maßleiste unten in Metern. Annahmen: Tür vorne links, Schaufenster vorne rechts, Durchgang zum Zwischengang hinten links, direkt neben der Puppenstube.</figcaption>
+    </figure>
+    <div class="list">
+      <div><b>Drei Wände, eine Insel</b><p>An drei Wänden stehen 10 IVAR-Felder (4 links, 3 hinten, 3 rechts). Die Theke verschwindet als festes Möbel und wird zur Insel in der Raummitte, 130 × 65 cm, 85 cm hoch, auf vier Lenkrollen mit Bremse.</p></div>
+      <div><b>Wege bleiben breit</b><p>Rings um die Insel sind es gut 1 m, vorne zur Tür 1,50 m. Ein Kinderwagen kommt hinein und kann wenden.</p></div>
+      <div><b>Kasse mit Blick zur Tür</b><p>Ihr steht hinter der Insel mit dem Rücken zur Ostheimer-Wand und seht Tür, Fenster und den ganzen Raum. Die Kasse ist ein Tablet oder eine Funkkasse auf der Insel.</p></div>
+      <div><b>Der Durchgang wird ein Stollentor</b><p>Statt einer Tür hängt ein roter Vorhang. Darüber wölbt sich der Waldsaum als Bogen. So wird der Weg zu Lager und WC Teil der Geschichte und kostet keinen Schwenkbereich.</p></div>
+      <div><b>Insel weg, Raum frei</b><p>Für Lesungen, Bastelnachmittage oder Geburtstage rollt die Insel vor das Fenster oder in den Zwischengang. Dann steht die ganze Mitte zur Verfügung.</p></div>
+    </div>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--pine)"></i>IVAR 30 cm</span>
+    <span><i style="border:1.5px dashed var(--red)"></i>Stollenkisten unten</span>
+    <span><i style="background:var(--moss)"></i>Insel auf Rollen</span>
+    <span><i style="border:1.5px dashed var(--ochre)"></i>Hängeleiter darüber</span>
+    <span><i style="background:var(--ochre-soft);border:1px solid var(--ochre)"></i>Fensterpodest</span>
+    <span><i style="border-top:2px solid var(--red);height:0"></i>Vorhang</span>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Von vorne</div>
+  <h2>Die drei Wände als Abwicklung</h2>
+  <p class="lead">Jede Wand so gezeichnet, wie man sie aus der Raummitte sieht. IVAR mit 179 cm hohen Seitenteilen passt unter die 2,20-m-Decke. Darüber bleiben gut 40 cm für die Vorratskisten und den Waldsaum davor.</p>
+  <div class="walls">
+    <figure class="fig"><div class="scroll"><div id="wallL"></div></div><figcaption><b>Linke Wand · Puppenstube &amp; Erstes Spielen.</b> Käthe Kruse, Nanchen, Schmusepüppchen, Grimm's und Grapat. Puppen sitzen in der Griffzone und schauen den Kindern entgegen, Stapel- und Steckspiele stehen in der Kinderzone.</figcaption></figure>
+    <figure class="fig"><div class="scroll"><div id="wallB"></div></div><figcaption><b>Rückwand · Ostheimer-Weide.</b> Das ist der erste Blick durch die Tür. Mit über 700 Artikeln ist Ostheimer euer Kern. Gestufte Böden machen daraus eine Landschaft mit Bauernhof, Wald und Krippe. Links das Stollentor zu Gang, WC und Lager, direkt neben der Puppenstube.</figcaption></figure>
+    <figure class="fig"><div class="scroll"><div id="wallR"></div></div><figcaption><b>Rechte Wand · Malstube &amp; Bücher.</b> Stockmar, Mercurius, Epochenhefte, Geistesleben und Graetz. Die Bücher stehen in der Griffzone, je Fach mindestens zwei Titel frontal. Wachsblöcke und Stifte liegen in Holzschalen statt in Hersteller-Displays. Vorne am Fenster ersetzt eine schmale Kartenleiste den freistehenden Drehständer.</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Das Herzstück</div>
+  <h2>Die Insel: der Zwergenwagen</h2>
+  <figure class="fig">
+    <div class="scroll"><div id="island"></div></div>
+    <figcaption>Ansicht von vorne, von der Seite und von oben. Insel 130 × 65 × 85 cm, darüber die Hängeleiter auf etwa 1,95 m.</figcaption>
+  </figure>
+  <div class="two">
+    <div class="list">
+      <div><b>Wie ein Leiterwagen</b><p>An beiden Stirnseiten sitzen große Zierräder (Ø 40 cm, Multiplex, rot lackiert mit Speichen). Gefahren wird auf vier versteckten Lenkrollen hinter einer Sockelblende. Kinder sehen einen Wagen, der durch den Wald gezogen wurde und hier Rast macht.</p></div>
+      <div><b>Oben der Jahreszeitenberg</b><p>Die linke Hälfte trägt drei abnehmbare Stufenkästen als Berg. Darauf wechselt alle sechs Wochen die Szene: Ostheimer-Figuren, Jahreszeitenpüppchen, ein Grimm's-Bogen als Tor. Die rechte Hälfte bleibt Kasse und Packtisch.</p></div>
+    </div>
+    <div class="list">
+      <div><b>Unten vier Stollenkisten</b><p>Je zwei Kisten ziehen von vorne und von hinten heraus. Vorne für Kinder: Murmeln, Kreisel, Kleinkram bis 5 €. Hinten für euch: Tüten, Geschenkpapier, Kassenzubehör.</p></div>
+      <div><b>Geschenkpapier am Wagenende</b><p>Eine Rundstange zwischen den Rädern hält zwei Papierrollen. Der Schnitt passiert direkt an der Kasse.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Bauteile</div>
+  <h2>Drei Dinge zum Selberbauen</h2>
+  <div class="two">
+    <figure class="fig">
+      <svg viewBox="0 0 420 250" role="img" aria-label="Schnitt durch die Krone: IVAR-Pfosten, Vorratskiste, LED und zweilagige Waldsaum-Blende">
+        <rect class="wallbg" x="0" y="0" width="420" height="250"/>
+        <line class="thin" x1="20" y1="20" x2="260" y2="20"/>
+        <text x="20" y="14" class="m">Decke 220 cm</text>
+        <rect class="post" x="40" y="96" width="120" height="8"/>
+        <text x="44" y="120" class="m">oberster IVAR-Boden 176 cm</text>
+        <rect class="crate" x="52" y="34" width="100" height="62"/>
+        <text x="62" y="70">Vorratskiste</text>
+        <rect x="170" y="26" width="5" height="80" style="fill:var(--mtn, var(--ochre-soft));stroke:var(--ochre)"/>
+        <rect x="178" y="40" width="5" height="66" class="tree"/>
+        <line class="led" x1="164" y1="100" x2="164" y2="86"/>
+        <path class="dim" d="M175 30 h30 M183 46 h22 M164 92 h-0"/>
+        <text x="210" y="34">Lage 1: Berge, Ocker</text>
+        <text x="210" y="50">Lage 2: Tannen, Moos</text>
+        <text x="210" y="66" class="m">je 6 mm Pappelsperrholz</text>
+        <text x="210" y="96" style="fill:var(--ochre)">LED 2700 K dahinter</text>
+        <text x="210" y="110" class="m">→ Abendrot-Leuchten</text>
+        <line class="dim" x1="40" y1="150" x2="190" y2="150"/>
+        <text x="80" y="166" class="m">30 cm Tiefe IVAR</text>
+        <text x="20" y="200">Befestigung: Kanthölzer 2 × 3 cm</text>
+        <text x="20" y="215">an den IVAR-Pfosten, Blende verschraubt</text>
+        <text x="20" y="230" class="m">Höhe Blende 35 cm (180–215 cm)</text>
+      </svg>
+      <figcaption>Schnitt durch die Krone. Der Waldsaum steht 2–3 cm vor dem Regal. Das Licht fällt durch die Lücken der Kontur nach oben und unten.</figcaption>
+    </figure>
+    <div class="list">
+      <div><b>1 · Der Waldsaum</b><p>Etwa 9 laufende Meter, aus 6-mm-Pappelsperrholz in 35-cm-Streifen. Die Kontur einmal auf Packpapier zeichnen, als Schablone übertragen und mit der Stichsäge aussägen. Die hintere Lage (Berge) wird ockerfarben lasiert, die vordere (Tannen) moosgrün. Ein Zwergenhaus pro Wand mit ausgesägtem Fenster leuchtet durch die LED. Das ist der stärkste Effekt für das wenigste Geld.</p></div>
+      <div><b>2 · Die Stollenkiste</b><p>Eine Kiste pro Regalfeld, 82 × 28 × 24 cm aus 18-mm-Kiefer-Leimholz auf 4 Lenkrollen Ø 50 mm (wegen des Teppichs). Die Front ist ockerfarben mit Rundbogen-Griffloch und darunter einem kleinen Messing-Etikett. Den untersten IVAR-Boden ins nächste Loch über 32 cm hängen. Bei IVAR 50 cm tief wird die Kiste 48 cm tief.</p></div>
+      <div><b>3 · Die Hängeleiter</b><p>Eine alte Holzleiter (Flohmarkt, 1,6–2 m) waagerecht an vier Deckenhaken mit Hanfseil auf etwa 1,95 m. Daran hängen an S-Haken Mobiles, Fenstersterne, Drachen und eine Laterne. Sie hängt nur über der Insel, wo niemand darunter läuft.</p></div>
+      <div><b>Zuschnitt Stollenkiste</b><p style="font-family:var(--f-mono);font-size:.84rem">Front und Rückwand 82 × 24 · Seiten 2 × 24,4 × 24 · Boden 82 × 28 (Multiplex 12 mm) · 4 Rollen · 16 Schrauben 4 × 40 + Leim</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Kosten und Reihenfolge</div>
+  <h2>Schritt für Schritt bei laufendem Betrieb</h2>
+  <div class="two">
+    <ol class="steps">
+      <li><b>Aufräumen und messen.</b> Kartons raus, Hersteller-Displays leeren, IVAR-Tiefen und Durchgang messen.</li>
+      <li><b>Ein Regalfeld als Prototyp.</b> Stollenkiste, LED und 1 m Waldsaum an der Rückwand. Eine Woche anschauen und Kunden fragen.</li>
+      <li><b>Waldsaum ganz herum</b> und alle Stollenkisten bauen. Der Vorrat zieht in die Krone und die Wurzeln.</li>
+      <li><b>Insel bauen</b> und die alte Theke abbauen. Vorhang vor den Durchgang hängen.</li>
+      <li><b>Hängeleiter, Wegweiser, Welten umsortieren.</b> Dann den Jahreszeitenberg zum ersten Mal bespielen.</li>
+    </ol>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Posten</th><th>Menge</th><th>Schätzung</th></tr></thead>
+        <tbody class="num">
+          <tr><td>Stollenkisten</td><td>10 + 4</td><td>280–450 €</td></tr>
+          <tr><td>Waldsaum, 2 Lagen, Lasur</td><td>~9 m</td><td>80–150 €</td></tr>
+          <tr><td>LED-Leisten 2700 K</td><td>~10 m</td><td>100–180 €</td></tr>
+          <tr><td>Insel mit Rollen und Zierrädern</td><td>1</td><td>180–300 €</td></tr>
+          <tr><td>Hängeleiter, Seile, Haken</td><td>1</td><td>30–80 €</td></tr>
+          <tr><td>Vorhang mit Stange</td><td>1</td><td>60–120 €</td></tr>
+          <tr><td>Vorratskisten Krone</td><td>~12</td><td>80–150 €</td></tr>
+          <tr><td><b>Summe</b></td><td></td><td><b>ca. 800–1.400 €</b></td></tr>
+        </tbody>
+      </table>
+      <p class="note" style="margin-top:8px">Material ohne Arbeitszeit, grob geschätzt. Bitte die aktuellen Preise im Baumarkt prüfen. Die IVAR-Regale sind vorhanden und kosten nichts zusätzlich.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="ask">
+    <h3>Damit die Zeichnungen genau stimmen</h3>
+    <ul>
+      <li>Wie breit sind Tür und Schaufenster, und gibt es auf der Efeuseite ein Fenster?</li>
+      <li>Sind die IVAR-Regale 30 oder 50 cm tief, und wie viele Felder habt ihr heute?</li>
+      <li>Wo sind Steckdosen für LED und Kasse?</li>
+    </ul>
+  </div>
+</section>
+</main>
+<footer class="wrap">Konzeptentwurf für den Zwergenladen. Maße: Laden 4 × 4 m, Decke 2,20 m, Breite von Tür und Schaufenster angenommen.</footer>
+
+<script>
+(function(){
+  /* ---------- Hilfen ---------- */
+  function f(n){return (+n).toFixed(1)}
+  var rnd=(function(){var s=7;return function(){s=(s*9301+49297)%233280;return s/233280}})();
+
+  /* ---------- Draufsicht ---------- */
+  (function(){
+    var S=90,P=34;
+    function X(m){return f(P+m*S)} function Y(m){return f(P+(m+1)*S)}
+    function r(x,y,w,h,c,e){return '<rect class="'+c+'" x="'+X(x)+'" y="'+Y(y)+'" width="'+f(w*S)+'" height="'+f(h*S)+'"'+(e||'')+'/>'}
+    function ln(a,b,c,d,k){return '<line class="'+k+'" x1="'+X(a)+'" y1="'+Y(b)+'" x2="'+X(c)+'" y2="'+Y(d)+'"/>'}
+    function t(x,y,s,k,a,rot){var tr=rot?' transform="rotate(-90 '+X(x)+' '+Y(y)+')"':'';return '<text x="'+X(x)+'" y="'+Y(y)+'"'+(k?' class="'+k+'"':'')+' text-anchor="'+(a||'middle')+'"'+tr+'>'+s+'</text>'}
+    function shelf(x,y,w,h){return r(x,y,w,h,'shelf')+r(x+.05,y+.05,w-.1,h-.1,'roll')}
+    var s='<svg viewBox="0 0 428 540" role="img" aria-label="Draufsicht Zwergenladen 4 mal 4 Meter mit Insel">';
+    s+=r(0,-1,4,1,'gang')+r(0,0,4,4,'floor');
+    s+=t(1.6,-0.48,'Zwischengang 1 × 4 m','m')+t(1.6,-0.3,'→ WC und Lager 2 × 3 m dahinter','m');
+    s+=shelf(0,0,.3,4)+shelf(1.3,0,2.6,.3)+shelf(3.7,.3,.3,2.6)+r(3.86,2.98,.14,.52,'shelf');
+    s+=t(.19,2.2,'Puppenstube · Erstes Spielen','',null,true);
+    s+=t(2.6,.2,'Ostheimer-Weide','');
+    s+=t(3.89,1.6,'Malstube · Bücher','',null,true)+t(3.6,3.27,'Karten','m','end');
+    s+=r(1.9,3.55,2.1,.45,'podium')+t(2.95,3.83,'Fensterpodest · Jahreszeiten','m');
+    /* Insel */
+    s+=r(1.35,1.4,1.3,.65,'island',' rx="4"');
+    s+=r(1.42,1.47,.56,.51,'step')+r(1.5,1.55,.4,.35,'step')+r(1.58,1.63,.24,.19,'step');
+    s+=r(2.15,1.5,.3,.2,'cash',' rx="2"');
+    s+=ln(2.6,1.45,2.6,2.0,'thin');
+    s+=t(2.25,1.92,'Insel','w');
+    s+='<circle class="cash" cx="'+X(2.3)+'" cy="'+Y(1.18)+'" r="5"/>'+t(2.3,1.05,'Kasse','m');
+    s+=r(1.2,1.43,1.6,.22,'ladder');
+    s+=t(2.0,2.32,'Hängeleiter über der Insel','m');
+    /* Wege */
+    s+='<polyline class="walk" points="'+[[1.05,3.9],[.75,2.9],[.75,1.0],[2.0,.85],[3.25,1.0],[3.3,2.6],[2.2,2.9],[1.2,3.4]].map(function(p){return X(p[0])+','+Y(p[1])}).join(' ')+'"/>';
+    /* Maße */
+    s+=t(.82,2.3,'105','m')+t(3.17,2.3,'105','m')+t(2.0,2.75,'150 cm zur Tür','m');
+    /* Wände */
+    s+=ln(0,-1,4,-1,'thin')+ln(0,-1,0,0,'thin')+ln(4,-1,4,0,'thin');
+    s+=ln(0,0,.3,0,'wall')+ln(1.2,0,4,0,'wall');
+    var d='M'+X(.3)+' '+Y(0);for(var i=0;i<6;i++){d+=' q'+f(.075*S)+' '+(i%2?5:-5)+' '+f(.15*S)+' 0'}
+    s+='<path class="curtain" d="'+d+'"/>'+t(.78,.25,'Stollentor','m');
+    s+=ln(0,0,0,4,'wall')+ln(4,0,4,4,'wall');
+    s+=ln(0,4,.6,4,'wall')+ln(1.5,4,1.9,4,'wall')+ln(3.7,4,4,4,'wall')+ln(1.9,4,3.7,4,'win');
+    s+='<path class="swing" d="M'+X(.6)+' '+Y(4)+' L'+X(.6)+' '+Y(3.1)+' A'+(.9*S)+' '+(.9*S)+' 0 0 1 '+X(1.5)+' '+Y(4)+'"/>';
+    s+=t(1.05,4.25,'Tür','m')+t(2.8,4.25,'Schaufenster','m')+t(2,4.48,'Straße','m');
+    /* Meterraster */
+    for(var k=0;k<=4;k++){s+=ln(k,4.58,k,4.62,'dim')+t(k,4.75,k+' m','m')}
+    s+=ln(0,4.6,4,4.6,'dim');
+    document.getElementById('plan').innerHTML=s+'</svg>';
+  })();
+
+  /* ---------- Wandabwicklungen ---------- */
+  function elev(c){
+    var S=100,P=34,H=2.2,L=c.len,W=L*S+2*P;
+    function X(m){return f(P+m*S)} function Y(h){return f(P+(H-h)*S)}
+    function rect(x,h0,w,h1,k,e){return '<rect class="'+k+'" x="'+X(x)+'" y="'+Y(h1)+'" width="'+f(w*S)+'" height="'+f((h1-h0)*S)+'"'+(e||'')+'/>'}
+    function t(x,h,s,k,a){return '<text x="'+X(x)+'" y="'+Y(h)+'"'+(k?' class="'+k+'"':'')+' text-anchor="'+(a||'middle')+'">'+s+'</text>'}
+    var s='<svg viewBox="0 0 '+f(W+70)+' '+f(H*S+2*P+24)+'" width="'+f(W+70)+'" style="max-width:100%;min-width:'+Math.round((W+70)*.85)+'px" role="img" aria-label="'+c.aria+'">';
+    s+=rect(0,0,L,H,'wallbg');
+    /* Krone: Berge + Tannen über Regalsegmenten */
+    function saum(x0,x1,house,sign){
+      var o='', pts=[[x0,1.80]], x=x0, up=true;
+      while(x<x1){x=Math.min(x1,x+.18+rnd()*.22);pts.push([x,up?2.05+rnd()*.1:1.95+rnd()*.05]);up=!up}
+      pts.push([x1,1.80]);
+      o+='<path class="mtn" d="M'+pts.map(function(p){return X(p[0])+' '+Y(p[1])}).join(' L')+' Z"/>';
+      for(var tx=x0+.08;tx<x1-.06;tx+=.13+rnd()*.12){
+        if(house&&Math.abs(tx-house)<.16)continue;
+        if(sign!=null&&Math.abs(tx-sign)<.52)continue;
+        var th=1.93+rnd()*.12,w=.07+rnd()*.03;
+        o+='<path class="tree" d="M'+X(tx-w)+' '+Y(1.84)+' L'+X(tx)+' '+Y(th)+' L'+X(tx+w)+' '+Y(1.84)+' Z M'+X(tx-w*.8)+' '+Y(1.9)+' L'+X(tx)+' '+Y(th+.04)+' L'+X(tx+w*.8)+' '+Y(1.9)+' Z"/>';
+      }
+      o+=rect(x0,1.80,x1-x0,1.85,'tree');
+      if(house){
+        o+=rect(house-.09,1.84,.18,1.96,'board')+'<path class="roof" d="M'+X(house-.12)+' '+Y(1.96)+' L'+X(house)+' '+Y(2.06)+' L'+X(house+.12)+' '+Y(1.96)+' Z"/>'+rect(house-.03,1.87,.06,1.92,'glow');
+      }
+      return o;
+    }
+    c.segs.forEach(function(g){
+      var bw=g.w/g.n;
+      /* Vorratskisten hinter der Blende */
+      for(var i=0;i<g.n;i++){s+=rect(g.x+i*bw+.06,1.79,bw-.12,2.1,'crate')}
+      for(i=0;i<g.n;i++){
+        var bx=g.x+i*bw;
+        [.32,.68,1.04,1.40,1.76].forEach(function(h,j){
+          s+=rect(bx+.02,h-.025,bw-.04,h,'board');
+          if(j<4){ /* Ware andeuten */
+            var gx=bx+.06;
+            while(gx<bx+bw-.12){var gw=.04+rnd()*.12,gh=.08+rnd()*.2;s+=rect(gx,h,gw,h+gh,'goods'+(1+Math.floor(rnd()*4)),' rx="2"');gx+=gw+.02+rnd()*.05}
+          }
+        });
+        if(g.stufen&&i===1){ /* Ostheimer-Landschaft: Stufen */
+          s+=rect(bx+.05,.68,bw-.1,.78,'step')+rect(bx+.15,.78,bw-.3,.88,'step');
+        }
+        /* Stollenkiste */
+        s+=rect(bx+.03,.04,bw-.06,.28,'box');
+        var cx=bx+bw/2;
+        s+='<path class="hole" d="M'+X(cx-.07)+' '+Y(.18)+' L'+X(cx-.07)+' '+Y(.22)+' A7 7 0 0 1 '+X(cx+.07)+' '+Y(.22)+' L'+X(cx+.07)+' '+Y(.18)+' Z"/>';
+        s+='<circle class="wheel" cx="'+X(bx+.1)+'" cy="'+Y(.02)+'" r="2.5"/><circle class="wheel" cx="'+X(bx+bw-.1)+'" cy="'+Y(.02)+'" r="2.5"/>';
+      }
+      for(i=0;i<=g.n;i++){s+=rect(g.x+i*bw-.02,0,.04,1.79,'post')}
+      s+='<line class="led" x1="'+X(g.x+.03)+'" y1="'+Y(1.775)+'" x2="'+X(g.x+g.w-.03)+'" y2="'+Y(1.775)+'"/>';
+      s+=saum(g.x,g.x+g.w,g.house,g.welt?g.x+g.w/2:null);
+      if(g.welt)s+=rect(g.x+g.w/2-.45,1.86,.9,1.99,'board',' rx="3"')+t(g.x+g.w/2,1.895,g.welt,'big');
+    });
+    (c.open||[]).forEach(function(o){
+      s+=rect(o.x,0,o.w,1.98,'gang');
+      for(var i=0;i<7;i++){var x=o.x+.05+i*(o.w-.1)/6;s+='<path class="curtain" d="M'+X(x)+' '+Y(1.96)+' q4 '+f(.5*S)+' 0 '+f(1*S)+' t0 '+f(.95*S)+'"/>'}
+      s+='<line class="thin" x1="'+X(o.x-.05)+'" y1="'+Y(1.97)+'" x2="'+X(o.x+o.w+.05)+'" y2="'+Y(1.97)+'"/>';
+      s+='<path class="mtn" d="M'+X(o.x-.1)+' '+Y(1.98)+' Q'+X(o.x+o.w/2)+' '+Y(2.24)+' '+X(o.x+o.w+.1)+' '+Y(1.98)+' Z"/>';
+      s+=t(o.x+o.w/2,1.1,o.label,'big halo');
+    });
+    (c.free||[]).forEach(function(o){s+=t(o.x,o.h,o.label,'m')});
+    s+='<line class="thin" x1="'+X(0)+'" y1="'+Y(H)+'" x2="'+X(L)+'" y2="'+Y(H)+'"/>';
+    s+='<line class="wall" x1="'+X(0)+'" y1="'+Y(0)+'" x2="'+X(L)+'" y2="'+Y(0)+'"/>';
+    s+=t(0,-.16,c.left,'m','start')+t(L,-.16,c.right,'m','end');
+    /* Höhenmaße rechts */
+    [[0,'0'],[.32,'32'],[1.0,'100'],[1.6,'160'],[1.79,'179'],[2.2,'220 cm']].forEach(function(p){
+      s+='<line class="dim" x1="'+X(L+.05)+'" y1="'+Y(p[0])+'" x2="'+X(L+.12)+'" y2="'+Y(p[0])+'"/>'+'<text x="'+X(L+.15)+'" y="'+f(+Y(p[0])+3)+'" class="m">'+p[1]+'</text>';
+    });
+    return s+'</svg>';
+  }
+  document.getElementById('wallL').innerHTML=elev({aria:'Linke Wand von vorne',len:4,left:'← Tür / Straße',right:'Stollentor · Rückwand →',
+    segs:[{x:.1,w:3.5,n:4,house:3.2,welt:'Puppenstube'}]});
+  document.getElementById('wallB').innerHTML=elev({aria:'Rückwand von vorne',len:4,left:'← linke Wand',right:'rechte Wand →',
+    segs:[{x:1.3,w:2.6,n:3,house:3.5,welt:'Ostheimer-Weide',stufen:true}],
+    open:[{x:.3,w:.9,label:'Stollentor'}]});
+  document.getElementById('wallR').innerHTML=elev({aria:'Rechte Wand von vorne',len:4,left:'← Rückwand',right:'Schaufenster →',
+    segs:[{x:.3,w:2.6,n:3,house:.6,welt:'Malstube'}],
+    free:[{x:3.2,h:.9,label:'Karten-'},{x:3.2,h:.8,label:'leiste'},{x:3.75,h:.9,label:'Fenster-'},{x:3.75,h:.8,label:'podest'}]});
+
+  /* ---------- Insel ---------- */
+  (function(){
+    var S=140,G=356; /* Boden-y */
+    function Y(h){return f(G-h*S)}
+    function R(x0,x,h0,w,h1,k,e){return '<rect class="'+k+'" x="'+f(x0+x*S)+'" y="'+Y(h1)+'" width="'+f(w*S)+'" height="'+f((h1-h0)*S)+'"'+(e||'')+'/>'}
+    function T(x0,x,h,s,k,a){return '<text x="'+f(x0+x*S)+'" y="'+Y(h)+'"'+(k?' class="'+k+'"':'')+' text-anchor="'+(a||'middle')+'">'+s+'</text>'}
+    var s='<svg viewBox="0 0 700 400" width="700" style="max-width:100%;min-width:600px" role="img" aria-label="Insel Zwergenwagen in Vorder-, Seiten- und Draufsicht">';
+    s+='<rect class="wallbg" x="0" y="0" width="700" height="400"/>';
+    s+='<line class="thin" x1="10" y1="'+Y(2.2)+'" x2="690" y2="'+Y(2.2)+'"/><text x="12" y="'+f(+Y(2.2)+12)+'" class="m">Decke 220</text>';
+    s+='<line class="wall" x1="10" y1="'+G+'" x2="440" y2="'+G+'"/>';
+    /* Vorderansicht */
+    var a=70,w=1.3;
+    s+=T(a,w/2,-.28,'VON VORNE','m');
+    s+=R(a,.06,0,w-.12,.08,'cash');
+    s+='<circle class="wheel" cx="'+f(a+.15*S)+'" cy="'+Y(.03)+'" r="4"/><circle class="wheel" cx="'+f(a+(w-.15)*S)+'" cy="'+Y(.03)+'" r="4"/>';
+    s+=R(a,0,.08,w,.82,'board');
+    s+=R(a,.05,.1,.57,.36,'box')+R(a,.68,.1,.57,.36,'box');
+    [.335,.965].forEach(function(cx){s+='<path class="hole" d="M'+f(a+(cx-.07)*S)+' '+Y(.24)+' L'+f(a+(cx-.07)*S)+' '+Y(.28)+' A10 10 0 0 1 '+f(a+(cx+.07)*S)+' '+Y(.28)+' L'+f(a+(cx+.07)*S)+' '+Y(.24)+' Z"/>'});
+    s+=R(a,.05,.42,w-.1,.78,'wallbg');
+    for(var gx=.08;gx<w-.15;gx+=.11){s+=R(a,gx,.42,.08,.5+rnd()*.14,'goods'+(1+Math.floor(rnd()*4)),' rx="2"')}
+    s+=R(a,-.02,.82,w+.04,.86,'board');
+    s+=R(a,-.04,.02,.03,.44,'rim')+R(a,w+.01,.02,.03,.44,'rim');
+    /* Jahreszeitenberg */
+    s+=R(a,.04,.86,.6,.98,'step')+R(a,.12,.98,.44,1.10,'step')+R(a,.22,1.10,.24,1.22,'step');
+    s+='<path class="tree" d="M'+f(a+.3*S)+' '+Y(1.22)+' L'+f(a+.34*S)+' '+Y(1.34)+' L'+f(a+.38*S)+' '+Y(1.22)+' Z"/>';
+    s+='<path class="roof" d="M'+f(a+.12*S)+' '+Y(1.10)+' L'+f(a+.15*S)+' '+Y(1.2)+' L'+f(a+.18*S)+' '+Y(1.10)+' Z"/>';
+    s+='<circle class="goods3" cx="'+f(a+.5*S)+'" cy="'+Y(1.03)+'" r="6"/>';
+    s+=R(a,.85,.86,.28,.9,'cash',' rx="2"')+T(a,.99,.94,'Kasse','m');
+    /* Hängeleiter */
+    var la=a-.15*S,lw=(w+.3)*S;
+    s+='<rect class="board" x="'+f(la)+'" y="'+Y(1.98)+'" width="'+f(lw)+'" height="6"/>';
+    for(var rg=0;rg<=8;rg++){s+='<line class="post" style="stroke:var(--pine-dark);stroke-width:2" x1="'+f(la+rg*lw/8)+'" y1="'+Y(1.98)+'" x2="'+f(la+rg*lw/8)+'" y2="'+f(+Y(1.98)+6)+'"/>'}
+    [.05,1.25].forEach(function(x){s+='<line class="rope" x1="'+f(a+x*S)+'" y1="'+Y(2.2)+'" x2="'+f(a+x*S)+'" y2="'+Y(1.98)+'"/>'});
+    [[.2,1.62,'star'],[.55,1.7,'bird'],[.9,1.58,'lamp'],[1.15,1.66,'star']].forEach(function(m){
+      var mx=a+m[0]*S;
+      s+='<line class="rope" x1="'+f(mx)+'" y1="'+Y(1.95)+'" x2="'+f(mx)+'" y2="'+Y(m[1]+.04)+'"/>';
+      if(m[2]==='star'){var p='';for(var i=0;i<10;i++){var rr=i%2?4:10,an=Math.PI/5*i-Math.PI/2;p+=(i?'L':'M')+f(mx+rr*Math.cos(an))+' '+f(+Y(m[1])+rr*Math.sin(an))}s+='<path class="glow" d="'+p+'Z"/>'}
+      else if(m[2]==='bird'){s+='<path class="tree" d="M'+f(mx-14)+' '+Y(m[1])+' Q'+f(mx)+' '+f(+Y(m[1])-10)+' '+f(mx+14)+' '+Y(m[1])+' Q'+f(mx)+' '+f(+Y(m[1])+4)+' '+f(mx-14)+' '+Y(m[1])+'Z"/>'}
+      else{s+='<rect class="roof" x="'+f(mx-7)+'" y="'+f(+Y(m[1])-8)+'" width="14" height="18" rx="5"/><rect class="glow" x="'+f(mx-4)+'" y="'+f(+Y(m[1])-4)+'" width="8" height="10" rx="3"/>'}
+    });
+    s+=T(a,w/2,2.03,'Hängeleiter ca. 195 cm','m');
+    /* Maße */
+    s+='<line class="dim" x1="'+a+'" y1="'+f(G+14)+'" x2="'+f(a+w*S)+'" y2="'+f(G+14)+'"/>'+T(a,w/2,-.2,'','');
+    s+='<text x="'+f(a+w*S/2)+'" y="'+f(G+28)+'" class="m" text-anchor="middle">130 cm</text>';
+    s+='<line class="dim" x1="'+f(a-26)+'" y1="'+Y(0)+'" x2="'+f(a-26)+'" y2="'+Y(.86)+'"/><text x="'+f(a-30)+'" y="'+Y(.45)+'" class="m" text-anchor="end">85</text>';
+
+    /* Seitenansicht */
+    var b=300,d=.65;
+    s+=R(b,0,0,d,.08,'cash');
+    s+=R(b,0,.08,d,.82,'board');
+    s+='<line class="roll" x1="'+f(b+d/2*S)+'" y1="'+Y(.1)+'" x2="'+f(b+d/2*S)+'" y2="'+Y(.36)+'"/>';
+    s+=R(b,-.02,.82,d+.04,.86,'board');
+    s+=R(b,.05,.86,.55,.98,'step')+R(b,.15,.98,.35,1.10,'step')+R(b,.25,1.10,.15,1.22,'step');
+    var cx=b+d/2*S,cy=+Y(.22),rr=.2*S;
+    s+='<circle class="rim" cx="'+f(cx)+'" cy="'+f(cy)+'" r="'+f(rr)+'"/>';
+    for(var sp=0;sp<6;sp++){var an=Math.PI/3*sp;s+='<line class="spoke" x1="'+f(cx)+'" y1="'+f(cy)+'" x2="'+f(cx+rr*Math.cos(an))+'" y2="'+f(cy+rr*Math.sin(an))+'"/>'}
+    s+='<circle class="roof" cx="'+f(cx)+'" cy="'+f(cy)+'" r="6"/>';
+    s+='<circle class="podium" cx="'+f(b+d*S+8)+'" cy="'+Y(.66)+'" r="8"/><circle class="podium" cx="'+f(b+d*S+8)+'" cy="'+Y(.52)+'" r="8"/>';
+    s+=T(b,d/2,-.28,'VON DER SEITE','m');
+    s+='<text x="'+f(b+d*S+20)+'" y="'+Y(.58)+'" class="m">Papierrollen</text>';
+    s+='<line class="dim" x1="'+b+'" y1="'+f(G+14)+'" x2="'+f(b+d*S)+'" y2="'+f(G+14)+'"/><text x="'+f(b+d*S/2)+'" y="'+f(G+28)+'" class="m" text-anchor="middle">65 cm</text>';
+    s+='<text x="'+f(b+d*S+6)+'" y="'+f(cy+4)+'" class="m">Zierrad Ø 40</text>';
+
+    /* Draufsicht */
+    var c0=455,c1=150,k=160;
+    s+='<text x="'+f(c0+1.3*k/2)+'" y="'+f(c1-40)+'" class="m" text-anchor="middle">VON OBEN</text>';
+    s+='<rect class="ladder" x="'+f(c0-.15*k)+'" y="'+f(c1+.2*k)+'" width="'+f(1.6*k)+'" height="'+f(.25*k)+'"/>';
+    s+='<rect class="island" x="'+c0+'" y="'+c1+'" width="'+f(1.3*k)+'" height="'+f(.65*k)+'" rx="4"/>';
+    s+='<rect class="step" x="'+f(c0+.04*k)+'" y="'+f(c1+.05*k)+'" width="'+f(.6*k)+'" height="'+f(.55*k)+'"/>';
+    s+='<rect class="step" x="'+f(c0+.12*k)+'" y="'+f(c1+.12*k)+'" width="'+f(.44*k)+'" height="'+f(.41*k)+'"/>';
+    s+='<rect class="step" x="'+f(c0+.22*k)+'" y="'+f(c1+.2*k)+'" width="'+f(.24*k)+'" height="'+f(.25*k)+'"/>';
+    s+='<rect class="cash" x="'+f(c0+.85*k)+'" y="'+f(c1+.1*k)+'" width="'+f(.28*k)+'" height="'+f(.18*k)+'" rx="2"/>';
+    s+='<text x="'+f(c0+1.0*k)+'" y="'+f(c1+.5*k)+'" class="w" text-anchor="middle">Packtisch</text>';
+    s+='<circle class="rim" cx="'+f(c0-4)+'" cy="'+f(c1+.325*k)+'" r="3"/><circle class="rim" cx="'+f(c0+1.3*k+4)+'" cy="'+f(c1+.325*k)+'" r="3"/>';
+    s+='<text x="'+f(c0+.65*k)+'" y="'+f(c1-8)+'" class="m" text-anchor="middle">↑ Kisten für euch</text>';
+    s+='<text x="'+f(c0+.65*k)+'" y="'+f(c1+.65*k+18)+'" class="m" text-anchor="middle">↓ Kisten für Kinder (Tür)</text>';
+    s+='<text x="'+f(c0+.34*k)+'" y="'+f(c1+.65*k+36)+'" class="m" text-anchor="middle">Jahreszeitenberg</text>';
+    s+='<text x="'+f(c0+1.0*k)+'" y="'+f(c1+.65*k+36)+'" class="m" text-anchor="middle">Kasse</text>';
+    document.getElementById('island').innerHTML=s+'</svg>';
+  })();
+})();
+</script>

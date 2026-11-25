@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<title>Der Zwergenwald – Umbaukonzept Zwergenladen</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#FFFCF6; --ink:#2A2118; --muted:#6E6050; --line:#DED0B8;
+  --ochre:#E3A12F; --ochre-soft:#F8E6BF; --on-ochre:#2A1C0C;
+  --red:#B3352B; --moss:#56703F; --moss-soft:#DCE5CF; --pine:#E6C690; --pine-dark:#B4864A;
+  --floor:#FBF3E3; --lager:#EEE3CF; --card:#FFFFFF; --wallbg:#FFF8EC;
+  --f-display:"Young Serif", Georgia, serif;
+  --f-body:"Atkinson Hyperlegible", "DejaVu Sans", sans-serif;
+  --f-mono:"IBM Plex Mono", "DejaVu Sans Mono", monospace;
+}
+@page{size:A4;margin:0}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font-family:var(--f-body);font-size:10.5pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{break-after:page;display:flex;flex-direction:column;gap:5mm;height:297mm;padding:15mm 16mm 12mm;overflow:hidden;position:relative}
+.pf{position:absolute;left:16mm;right:16mm;bottom:7mm;display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:7pt;color:var(--muted)}
+.wallfig svg{max-width:150mm!important;margin:0 auto}
+.page:last-child{break-after:auto}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;line-height:1.15;margin:0}
+h2{font-size:22pt}
+h3{font-size:13pt}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:11.5pt}
+.muted{color:var(--muted)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm}
+.box{border-radius:3mm;padding:4mm 5mm;display:flex;flex-direction:column;gap:1.5mm}
+.box b{font-family:var(--f-display);font-weight:400;font-size:13pt}
+.box .h{font-family:var(--f-mono);font-size:7pt;letter-spacing:.08em;color:var(--muted)}
+.krone{background:var(--moss-soft)} .stamm{background:var(--ochre-soft)} .wurzel{background:var(--lager)} .himmel{border:1px solid var(--line);background:var(--card)}
+figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:3mm;padding:3mm;display:flex;flex-direction:column;gap:2mm;break-inside:avoid}
+figure svg{width:100%!important;min-width:0!important;max-width:100%!important;height:auto;display:block}
+figcaption{font-size:9pt;color:var(--muted)}
+figcaption b{color:var(--ink)}
+ul,ol{margin:0;padding-left:5mm;display:flex;flex-direction:column;gap:1.5mm}
+ol li::marker{font-family:var(--f-mono);color:var(--ochre)}
+.item b{display:block}
+.items{display:flex;flex-direction:column;gap:3.5mm}
+.items p{color:var(--muted);font-size:10pt}
+table{border-collapse:collapse;width:100%;font-size:9.5pt}
+th,td{text-align:left;padding:2mm 2.5mm;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-mono);font-size:7pt;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:2mm 5mm;font-size:8.5pt;color:var(--muted)}
+.legend i{display:inline-block;width:5mm;height:2.6mm;vertical-align:middle;margin-right:1.5mm;border-radius:.5mm}
+
+/* Deckblatt */
+.cover{background:var(--ochre);color:var(--on-ochre);margin:-15mm -16mm 0;padding:22mm 16mm 12mm;display:flex;flex-direction:column;gap:6mm}
+.cover .eyebrow{color:var(--on-ochre);opacity:.75}
+.cover h1{font-size:44pt;line-height:1.02}
+.cover p{font-size:13pt;max-width:150mm}
+.facts{display:flex;gap:9mm;flex-wrap:wrap;margin-top:2mm}
+.facts div{display:flex;flex-direction:column}
+.facts b{font-family:var(--f-display);font-weight:400;font-size:18pt;line-height:1.1}
+.facts span{font-size:8.5pt}
+#cover svg{display:block;width:100%;height:auto}
+.coverart{margin:0 -16mm}
+.sign{font-family:var(--f-mono);font-size:8.5pt;color:var(--muted);margin-top:auto;display:flex;justify-content:space-between}
+
+/* Mitreden */
+.q{display:flex;flex-direction:column;gap:2mm;break-inside:avoid}
+.q b{font-family:var(--f-display);font-weight:400;font-size:12pt}
+.lines{height:16mm;background:repeating-linear-gradient(to bottom,transparent 0,transparent 7.4mm,var(--line) 7.4mm,var(--line) 7.9mm)}
+.ticks{display:flex;gap:6mm;flex-wrap:wrap;font-size:10pt}
+.ticks span::before{content:"";display:inline-block;width:3.5mm;height:3.5mm;border:1.2px solid var(--ink);border-radius:.6mm;margin-right:2mm;vertical-align:-.5mm}
+
+{{SVGCSS}}
+</style></head>
+<body>
+
+<!-- 1 · Deckblatt -->
+<section class="page">
+  <div class="cover">
+    <div class="eyebrow">Zwergenladen · zwergenladen.info · Umbaukonzept</div>
+    <h1>Der Zwergenwald</h1>
+    <p>Wie unser kleiner Laden neu wachsen kann: mehr Platz für Schätze, mehr Ruhe fürs Auge und mehr Zwergenladen in jedem Winkel.</p>
+    <div class="facts">
+      <div><b>4 × 4 m</b><span>Ladenfläche</span></div>
+      <div><b>2,20 m</b><span>Deckenhöhe</span></div>
+      <div><b>~1.550</b><span>Artikel</span></div>
+      <div><b>1</b><span>Insel auf Rollen</span></div>
+    </div>
+  </div>
+  <div class="coverart" id="cover"></div>
+  <div style="display:flex;flex-direction:column;gap:3mm;max-width:160mm">
+    <h3>Worum es geht</h3>
+    <p>Auf 16 Quadratmetern stehen heute rund 1.550 Spielsachen, Bücher und Bastelmaterialien. Die Ware ist wunderschön, aber der Raum kommt an seine Grenzen: Die untersten Fächer sind kaum zu sehen, Kartons stehen im Weg, und die Theke nimmt Platz, den Familien mit Kinderwagen brauchen.</p>
+    <p>Dieses Papier zeigt eine Idee, wie der Laden mit kleinem Budget neu geordnet werden kann. Die Regale bleiben, sie werden ergänzt. Fast alles lässt sich selbst bauen. Wir freuen uns über jede Meinung dazu: Auf der letzten Seite ist Platz zum Mitreden.</p>
+  </div>
+  <div class="sign"><span>Entwurf, November 2026</span><span>Zeichnungen maßstäblich, Maße teilweise angenommen</span></div>
+</section>
+
+<!-- 2 · Leitidee -->
+<section class="page">
+  <div class="eyebrow">Die Leitidee</div>
+  <h2>Ein Wald, durch den man geht</h2>
+  <p class="lead">Im Zwergenladen wohnen Ostheimer-Tiere, Grimm's-Regenbögen, Käthe-Kruse- und Nanchen-Puppen, Stockmar-Wachs, Jahreszeitenpüppchen und Fenstersterne. Statt all das in Regale zu stopfen, wird der Laden selbst zu einem Wald. Jede Höhe bekommt eine Aufgabe. Das Bild gibt der Fülle eine Ordnung, die Kinder sofort verstehen und Erwachsene als ruhig empfinden.</p>
+  <div class="cols">
+    <div class="box krone"><span class="h">KRONE · 180–215 CM</span><b>Der Waldsaum</b><p>Über allen Regalen läuft eine ausgesägte Holzblende: hinten Berge in Ocker, vorne Tannen in Moosgrün, an jeder Wand ein kleines Zwergenhaus mit Licht im Fenster. Dahinter verschwindet der Vorrat in Kisten.</p></div>
+    <div class="box stamm"><span class="h">STÄMME · 35–160 CM</span><b>Die drei Welten</b><p>Jede Wand erzählt eine Welt: links die Puppenstube, hinten die Ostheimer-Weide, rechts die Malstube mit den Büchern. Holzschilder im Stil unseres Ladenschilds zeigen den Weg.</p></div>
+    <div class="box wurzel"><span class="h">WURZELN · 0–32 CM</span><b>Die Stollenkisten</b><p>Unter jedem Regal rollt eine Kiste mit Rundbogen-Griff wie ein Stolleneingang. Für uns ist sie Lager, für Kinder eine Schatzkiste zum Selber-Aufziehen.</p></div>
+    <div class="box himmel"><span class="h">HIMMEL · ÜBER DER INSEL</span><b>Die Hängeleiter</b><p>Eine alte Holzleiter hängt waagerecht unter der Decke über der Insel. Daran schweben Mobiles, Fenstersterne und eine Laterne, genau dort, wo niemand darunter läuft.</p></div>
+  </div>
+  <h3 style="margin-top:3mm">Was sich dadurch ändert</h3>
+  <ul>
+    <li><b>Mehr Platz ohne mehr Fläche.</b> Die Stollenkisten und die Krone fassen zusammen ungefähr so viel wie ein zusätzliches kleines Lager.</li>
+    <li><b>Mehr Ruhe.</b> Gleiche Kisten, gleiche Hölzer und gleiche Höhen bilden einen ruhigen Rahmen. Darin wirken die bunten Dinge wieder als Schätze.</li>
+    <li><b>Mehr Bewegungsfreiheit.</b> Die feste Theke verschwindet. Rund um die neue Insel bleibt überall gut ein Meter Platz.</li>
+    <li><b>Mehr Zwergenladen.</b> Was draußen mit Efeu, Ockerfarbe und Schnitzschild beginnt, setzt sich innen fort.</li>
+  </ul>
+<div class="pf"><span>Zwergenladen · Der Zwergenwald</span><span>2 / 9</span></div>
+</section>
+
+<!-- 3 · Grundriss -->
+<section class="page">
+  <div class="eyebrow">Von oben</div>
+  <h2>Der neue Grundriss</h2>
+  <div class="cols" style="grid-template-columns:1.1fr .9fr;align-items:start">
+    <figure><div id="plan"></div><figcaption>Draufsicht, Maßleiste in Metern. Hinten links führt das Stollentor in den Zwischengang zu WC und Lager.</figcaption></figure>
+    <div class="items">
+      <div class="item"><b>Drei Wände, eine Insel</b><p>Zehn Regalfelder stehen an drei Wänden: vier links, drei hinten, drei rechts. In der Mitte steht die Insel, 130 × 65 cm groß, auf Rollen mit Bremse.</p></div>
+      <div class="item"><b>Breite Wege</b><p>Rings um die Insel gut ein Meter, zur Tür 1,50 m. Ein Kinderwagen kommt herein und kann wenden.</p></div>
+      <div class="item"><b>Kasse mit Blick zur Tür</b><p>Hinter der Insel sieht man Tür, Fenster und den ganzen Raum. Kassiert wird mit einem Tablet direkt auf der Insel.</p></div>
+      <div class="item"><b>Das Stollentor</b><p>Der Durchgang hinten links, direkt neben der Puppenstube, bekommt statt einer Tür einen roten Vorhang mit Bogen darüber. Der Weg ins Lager wird Teil der Geschichte und braucht keinen Platz zum Aufschwingen.</p></div>
+      <div class="item"><b>Platz für Feste</b><p>Für Lesungen, Bastelnachmittage oder Geburtstage rollt die Insel zur Seite oder in den Zwischengang. Dann ist die ganze Mitte frei.</p></div>
+    </div>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--pine)"></i>Regal</span>
+    <span><i style="border:1.5px dashed var(--red)"></i>Stollenkisten</span>
+    <span><i style="background:var(--moss)"></i>Insel</span>
+    <span><i style="border:1.5px dashed var(--ochre)"></i>Hängeleiter</span>
+    <span><i style="background:var(--ochre-soft);border:1px solid var(--ochre)"></i>Fensterpodest</span>
+    <span><i style="border-top:2px solid var(--red);height:0"></i>Vorhang</span>
+    <span><i style="border-top:2px dotted var(--moss);height:0"></i>Rundweg</span>
+  </div>
+<div class="pf"><span>Zwergenladen · Der Zwergenwald</span><span>3 / 9</span></div>
+</section>
+
+<!-- 4 · Wände 1 -->
+<section class="page">
+  <div class="eyebrow">Von vorne</div>
+  <h2>Die Wände, wie man sie sieht</h2>
+  <p>Jede Wand ist so gezeichnet, wie man sie aus der Mitte des Ladens sieht. Die Regale sind 179 cm hoch und passen unter die 2,20 m hohe Decke. Darüber bleibt Platz für die Vorratskisten und den Waldsaum davor.</p>
+  <figure class="wallfig"><div id="wallB"></div><figcaption><b>Rückwand · Ostheimer-Weide.</b> Der erste Blick durch die Tür. Ostheimer ist mit über 700 Artikeln der Kern des Ladens. Gestufte Böden machen daraus eine Landschaft mit Bauernhof, Wald und Krippe. Links öffnet sich das Stollentor.</figcaption></figure>
+  <figure class="wallfig"><div id="wallL"></div><figcaption><b>Linke Wand · Puppenstube &amp; Erstes Spielen.</b> Käthe Kruse, Nanchen, Schmusepüppchen, Grimm's und Grapat. Die Puppen sitzen auf Augenhöhe und schauen den Kindern entgegen. Stapel- und Steckspiele stehen tiefer, wo Kinder sie greifen.</figcaption></figure>
+<div class="pf"><span>Zwergenladen · Der Zwergenwald</span><span>4 / 9</span></div>
+</section>
+
+<!-- 5 · Wände 2 -->
+<section class="page">
+  <figure class="wallfig"><div id="wallR"></div><figcaption><b>Rechte Wand · Malstube &amp; Bücher.</b> Stockmar, Mercurius, Epochenhefte, Geistesleben und Graetz. Bücher stehen auf Griffhöhe, in jedem Fach einige mit dem Titelbild nach vorne. Wachsblöcke und Stifte liegen in Holzschalen. Vorne am Fenster ersetzt eine schmale Kartenleiste den Drehständer.</figcaption></figure>
+  <h3>Die Höhen im Regal</h3>
+  <table>
+    <thead><tr><th>Zone</th><th>Höhe</th><th>Was dort hinkommt</th></tr></thead>
+    <tbody>
+      <tr><td>Krone</td><td class="n">180–215 cm</td><td>Vorrat in gleichen Holzkisten, davor der Waldsaum mit Licht</td></tr>
+      <tr><td>Griffzone</td><td class="n">100–160 cm</td><td>Augenhöhe der Erwachsenen: Bücher, Geschenke, Neuheiten, Puppen</td></tr>
+      <tr><td>Kinderzone</td><td class="n">35–100 cm</td><td>Anfassen erlaubt: Holztiere, Steckspiele, Kleinkram in Schalen</td></tr>
+      <tr><td>Wurzeln</td><td class="n">0–32 cm</td><td>Stollenkisten: Lager für uns, Schatzkisten für Kinder</td></tr>
+    </tbody>
+  </table>
+  <h3>Kleine Dinge mit großer Wirkung</h3>
+  <ul>
+    <li><b>Warmes Licht.</b> LED-Leisten in 2700 Kelvin hinter dem Waldsaum und unter einzelnen Böden. Holz und Filz leuchten dann wie im Schaufenster.</li>
+    <li><b>Keine Kartons und keine Hersteller-Displays im Raum.</b> Was nicht Ware ist, wandert in Kisten.</li>
+    <li><b>Ordnung nach Welten statt nach Marken.</b> Kunden suchen eine Puppe oder ein Geschenk für Vierjährige, nicht einen Hersteller.</li>
+  </ul>
+<div class="pf"><span>Zwergenladen · Der Zwergenwald</span><span>5 / 9</span></div>
+</section>
+
+<!-- 6 · Insel -->
+<section class="page">
+  <div class="eyebrow">Das Herzstück</div>
+  <h2>Die Insel: der Zwergenwagen</h2>
+  <figure><div id="island"></div><figcaption>Ansicht von vorne, von der Seite und von oben. Die Insel misst 130 × 65 × 85 cm, die Hängeleiter darüber hängt auf etwa 1,95 m.</figcaption></figure>
+  <div class="cols">
+    <div class="items">
+      <div class="item"><b>Wie ein Leiterwagen</b><p>An beiden Enden sitzen große rote Zierräder mit Speichen. Gefahren wird auf versteckten Rollen. Kinder sehen einen Wagen, der durch den Wald gezogen wurde und hier Rast macht.</p></div>
+      <div class="item"><b>Der Jahreszeitenberg</b><p>Auf der linken Hälfte stehen drei Stufenkästen als Berg. Alle sechs Wochen wechselt dort die Szene, mit Ostheimer-Figuren, Jahreszeitenpüppchen und einem Regenbogen als Tor. Stammkunden haben so immer einen Grund, wieder hinzusehen.</p></div>
+    </div>
+    <div class="items">
+      <div class="item"><b>Kasse und Packtisch</b><p>Die rechte Hälfte bleibt frei zum Kassieren und Einpacken. Zwei Rollen Geschenkpapier hängen am Wagenende zwischen den Rädern.</p></div>
+      <div class="item"><b>Vier Stollenkisten</b><p>Vorne, zur Tür hin, ziehen Kinder Kisten mit Murmeln, Kreiseln und Kleinigkeiten bis 5 € auf. Hinten liegen Tüten, Papier und Kassenzubehör.</p></div>
+    </div>
+  </div>
+<div class="pf"><span>Zwergenladen · Der Zwergenwald</span><span>6 / 9</span></div>
+</section>
+
+<!-- 7 · Bauteile -->
+<section class="page">
+  <div class="eyebrow">Zum Selberbauen</div>
+  <h2>Drei Bauteile</h2>
+  <div class="cols" style="align-items:start">
+    <figure>{{KRONE}}<figcaption>Schnitt durch die Krone. Der Waldsaum steht 2–3 cm vor dem Regal. Das Licht dahinter fällt durch die Lücken der Kontur.</figcaption></figure>
+    <div class="items">
+      <div class="item"><b>1 · Der Waldsaum</b><p>Etwa 9 Meter, aus 6 mm dünnem Pappelsperrholz. Die Kontur wird einmal auf Packpapier gezeichnet, übertragen und mit der Stichsäge ausgesägt. Die hintere Lage wird ocker lasiert, die vordere moosgrün. Es ist der stärkste Effekt für das wenigste Geld.</p></div>
+      <div class="item"><b>2 · Die Stollenkiste</b><p>Eine Kiste pro Regalfeld, 82 × 28 × 24 cm aus Kiefernholz passend zu den Regalen, auf vier Rollen. Die Front ist ockerfarben mit Rundbogen-Griffloch und einem kleinen Messingschild.</p></div>
+      <div class="item"><b>3 · Die Hängeleiter</b><p>Eine alte Holzleiter vom Flohmarkt hängt an vier Deckenhaken mit Hanfseil. Daran hängen an S-Haken Mobiles, Sterne und eine Laterne.</p></div>
+    </div>
+  </div>
+  <h3>Zuschnitt einer Stollenkiste</h3>
+  <table>
+    <thead><tr><th>Teil</th><th>Stück</th><th>Maß</th><th>Material</th></tr></thead>
+    <tbody>
+      <tr><td>Front, Rückwand</td><td class="n">2</td><td class="n">82 × 24 cm</td><td>Kiefer-Leimholz 18 mm</td></tr>
+      <tr><td>Seiten</td><td class="n">2</td><td class="n">24,4 × 24 cm</td><td>Kiefer-Leimholz 18 mm</td></tr>
+      <tr><td>Boden</td><td class="n">1</td><td class="n">82 × 28 cm</td><td>Multiplex 12 mm</td></tr>
+      <tr><td>Lenkrollen</td><td class="n">4</td><td class="n">Ø 50 mm</td><td>weiche Lauffläche, für den Teppich</td></tr>
+    </tbody>
+  </table>
+  <p class="muted" style="font-size:9pt">Bei 50 cm tiefen Regalen wird die Kiste 48 cm tief. Der unterste Regalboden wird dafür auf gut 32 cm angehoben.</p>
+<div class="pf"><span>Zwergenladen · Der Zwergenwald</span><span>7 / 9</span></div>
+</section>
+
+<!-- 8 · Kosten -->
+<section class="page">
+  <div class="eyebrow">Aufwand</div>
+  <h2>Was es kostet und wie es losgeht</h2>
+  <div class="cols" style="align-items:start">
+    <div style="display:flex;flex-direction:column;gap:3mm">
+      <h3>Materialkosten, grob geschätzt</h3>
+      <table>
+        <thead><tr><th>Posten</th><th>Menge</th><th>Schätzung</th></tr></thead>
+        <tbody>
+          <tr><td>Stollenkisten</td><td class="n">14</td><td class="n">280–450 €</td></tr>
+          <tr><td>Waldsaum mit Lasur</td><td class="n">~9 m</td><td class="n">80–150 €</td></tr>
+          <tr><td>LED-Licht warmweiß</td><td class="n">~10 m</td><td class="n">100–180 €</td></tr>
+          <tr><td>Insel mit Rädern</td><td class="n">1</td><td class="n">180–300 €</td></tr>
+          <tr><td>Hängeleiter, Seile</td><td class="n">1</td><td class="n">30–80 €</td></tr>
+          <tr><td>Vorhang Stollentor</td><td class="n">1</td><td class="n">60–120 €</td></tr>
+          <tr><td>Vorratskisten Krone</td><td class="n">~12</td><td class="n">80–150 €</td></tr>
+          <tr><td><b>Zusammen</b></td><td></td><td class="n"><b>ca. 800–1.400 €</b></td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="font-size:9pt">Ohne Arbeitszeit. Die Regale sind schon da. Die Preise sind Schätzungen und müssen im Baumarkt geprüft werden.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:3mm">
+      <h3>Schritt für Schritt bei laufendem Betrieb</h3>
+      <ol>
+        <li><b>Aufräumen.</b> Kartons raus, Hersteller-Displays leeren, alles ausmessen.</li>
+        <li><b>Ein Probefeld.</b> Ein Regal mit Stollenkiste, Licht und einem Meter Waldsaum an der Rückwand. Eine Woche anschauen und Kunden fragen.</li>
+        <li><b>Den Wald wachsen lassen.</b> Waldsaum ganz herum, alle Stollenkisten bauen, Vorrat nach oben und unten verteilen.</li>
+        <li><b>Die Insel bauen</b> und die alte Theke abbauen. Den Vorhang ins Stollentor hängen.</li>
+        <li><b>Den Himmel einrichten.</b> Hängeleiter, Wegweiser und die Welten neu sortieren. Dann den Jahreszeitenberg zum ersten Mal schmücken.</li>
+      </ol>
+    </div>
+  </div>
+<div class="pf"><span>Zwergenladen · Der Zwergenwald</span><span>8 / 9</span></div>
+</section>
+
+<!-- 9 · Mitreden -->
+<section class="page">
+  <div class="eyebrow">Mitreden</div>
+  <h2>Was meint ihr?</h2>
+  <p class="lead">Dieses Konzept ist ein Entwurf. Wer den Zwergenladen kennt, weiß am besten, was ihm guttut. Wir freuen uns über jede Anmerkung, gern direkt auf diesem Blatt.</p>
+  <div class="q"><b>Was gefällt dir an der Idee vom Zwergenwald am besten?</b><div class="ticks"><span>Waldsaum mit Licht</span><span>Stollenkisten</span><span>Insel als Zwergenwagen</span><span>Hängeleiter</span><span>Jahreszeitenberg</span></div></div>
+  <div class="q"><b>Was würdest du im Laden auf keinen Fall vermissen wollen?</b><div class="lines"></div></div>
+  <div class="q"><b>Welche Welt würdest du zuerst besuchen, und was fehlt dir dort?</b><div class="ticks"><span>Puppenstube</span><span>Ostheimer-Weide</span><span>Malstube &amp; Bücher</span><span>Jahreszeitenberg</span></div><div class="lines"></div></div>
+  <div class="q"><b>Würdest du zu einer Lesung, einem Bastelnachmittag oder einem Fest im Laden kommen?</b><div class="ticks"><span>Ja, gern</span><span>Vielleicht</span><span>Eher nicht</span></div></div>
+  <div class="q"><b>Was möchtest du uns sonst noch sagen?</b><div class="lines" style="height:32mm"></div></div>
+  <p class="muted" style="font-size:9pt">Danke fürs Mitdenken! · Zwergenladen · zwergenladen.info</p>
+<div class="pf"><span>Zwergenladen · Der Zwergenwald</span><span>9 / 9</span></div>
+</section>
+
+<script>
+{{SCRIPT}}
+</script>
+<script>
+(function(){
+  var s='<svg viewBox="0 0 1000 230" role="img" aria-label="Waldsaum mit dem Zwergenladen als kleinem Haus">';
+  var v=11;function r(){v=(v*9301+49297)%233280;return v/233280}
+  s+='<rect x="0" y="0" width="1000" height="230" style="fill:var(--paper)"/>';
+  var d='M0 230 L0 120',x=0,up=true;while(x<1000){x=Math.min(1000,x+50+r()*70);d+=' L'+x.toFixed(0)+' '+(up?40+r()*40:100+r()*30).toFixed(0);up=!up}d+=' L1000 230 Z';
+  s+='<path class="mtn" d="'+d+'"/>';
+  s+='<rect class="tree" x="0" y="200" width="1000" height="30"/>';
+  for(var t=10;t<1000;t+=26+r()*30){if(t>420&&t<600)continue;var h=60+r()*70,w=16+r()*10;s+='<path class="tree" d="M'+(t-w)+' 205 L'+t+' '+(205-h)+' L'+(t+w)+' 205 Z M'+(t-w*.8)+' '+(205-h*.35)+' L'+t+' '+(195-h)+' L'+(t+w*.8)+' '+(205-h*.35)+' Z"/>'}
+  /* der Laden als Häuschen */
+  s+='<rect x="452" y="128" width="104" height="74" style="fill:var(--ochre)"/>';
+  s+='<path d="M440 132 L504 104 L568 132 Z" style="fill:var(--ink)"/>';
+  s+='<rect x="468" y="152" width="20" height="50" style="fill:var(--red)"/>';
+  s+='<rect x="500" y="150" width="44" height="28" style="fill:var(--ochre-soft);stroke:var(--red);stroke-width:3"/>';
+  s+='<rect x="498" y="134" width="48" height="10" rx="2" style="fill:var(--pine)"/>';
+  s+='<path d="M452 132 q-14 30 -2 70 L452 202 Z" style="fill:var(--moss)"/>';
+  s+='<rect x="550" y="186" width="20" height="5" style="fill:var(--pine-dark)"/>';
+  document.getElementById('cover').innerHTML=s+'</svg>';
+})();
+</script>
+</body></html>
